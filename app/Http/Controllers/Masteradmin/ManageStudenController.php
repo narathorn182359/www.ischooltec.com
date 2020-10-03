@@ -72,27 +72,67 @@ class ManageStudenController extends Controller
            $data = Excel::load($path)->get();
            if($data->count()){
             foreach ($data as $key => $value) {
-                $arr[] = [
-                          'img_student' => $value->img_student,
-                          'student_code_id' => $value->student_code_id,
-                          'title' => $value->title,
-                          'name' => $value->name,
-                          'lastname' => $value->lastname,
-                          'degree' => $value->degree,
-                          'class' => $value->class,
-                          'room' => $value->room,
-                          'name_school' => $value->name_school,
-                          'birthday' => $value->birthday,
-                          'nationality' => $value->nationality,
-                          'tel' => $value->tel,
-                          'email' => $value->email,
-                          'address' => $value->address,
-                          'father' => $value->father,
-                          'father_tel' => $value->father_tel,
-                          'mom' => $value->mom,
-                          'mom_tel' => $value->mom_tel,
-                          'consult' => $value->consult,
-                        ];
+
+                if(  $value->student_code_id != ""){
+
+                    $checkcard = DB::table('alf_student_info')->where('student_code_id', $value->student_code_id)->count();
+                    if( $checkcard == 0){
+                        $arr[] = [
+                            'img_student' => $value->img_student,
+                            'student_code_id' => $value->student_code_id,
+                            'title' => $value->title,
+                            'name' => $value->name,
+                            'lastname' => $value->lastname,
+                            'degree' => $value->degree,
+                            'class' => $value->class,
+                            'room' => $value->room,
+                            'name_school' => $value->name_school,
+                            'birthday' => $value->birthday,
+                            'nationality' => $value->nationality,
+                            'tel' => $value->tel,
+                            'email' => $value->email,
+                            'address' => $value->address,
+                            'father' => $value->father,
+                            'father_tel' => $value->father_tel,
+                            'mom' => $value->mom,
+                            'mom_tel' => $value->mom_tel,
+                            'consult' => $value->consult,
+                            'created_by' =>Auth::user()->username,
+                            'created_at' =>Carbon::now()
+                          ];
+                    }else{
+                        DB::table('alf_student_info')
+                        ->where('student_code_id', $value->student_code_id)
+                        ->update([
+                            'img_student' => $value->img_student,
+                            'student_code_id' => $value->student_code_id,
+                            'title' => $value->title,
+                            'name' => $value->name,
+                            'lastname' => $value->lastname,
+                            'degree' => $value->degree,
+                            'class' => $value->class,
+                            'room' => $value->room,
+                            'name_school' => $value->name_school,
+                            'birthday' => $value->birthday,
+                            'nationality' => $value->nationality,
+                            'tel' => $value->tel,
+                            'email' => $value->email,
+                            'address' => $value->address,
+                            'father' => $value->father,
+                            'father_tel' => $value->father_tel,
+                            'mom' => $value->mom,
+                            'mom_tel' => $value->mom_tel,
+                            'consult' => $value->consult,
+                            'update_by' =>Auth::user()->username,
+                            'updated_at' =>Carbon::now()
+                          ]);
+
+
+
+                    }
+
+                }
+
             }
 
             if(!empty($arr))

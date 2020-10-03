@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', function () {
-  
+
     return view('welcome');
 });
 
 
 Route::get('/uploadimg', function () {
-  
+
     return view('ischool.uploadimg');
 });
 
@@ -58,6 +58,10 @@ Route::resource('mgmaseterstuden', 'Masteradmin\ManageStudenController')->names(
 Route::resource('mgmasetergroup', 'Masteradmin\ManageGroupUserController')->names([
     'create' => 'mgmasetergroup.create',
     'store'  => 'mgmasetergroup.store'
+]);
+Route::resource('roomsetting', 'Masteradmin\RoomsettingController')->names([
+    'create' => 'roomsetting.create',
+    'store'  => 'roomsetting.store'
 ]);
 Route::resource('mgteacherinfo', 'Teacher\InfoStudentController');
 Route::resource('class-schedule-teacher', 'Teacher\ScheduleController');
