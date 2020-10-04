@@ -11,271 +11,39 @@ class PythonController extends Controller
     public function store(Request $request)
     {
 
-        $getdata = DB::table('alf_student_info')
+        $getdata_check = DB::table('alf_student_info')
             ->where('student_code_id', $request->username)
             ->where('name_school', $request->schoolcode)
-            ->first();
-
-        $key_notification = DB::table('alf_key_notification')
-            ->where('code_reg', $request->username)
-            ->where('login_status', '1')
-            ->get();
-
-        $parent_info = DB::table('alf_parent_info')
-            ->where('student_parent', $request->username)
-            ->where('school_parent', $request->schoolcode)
-            ->first();
-        $term = DB::table('alf_term_active')
-            ->where('name_school_id', $getdata->name_school)
-            ->where('active', "Y")
-            ->first();
-
-
-
-
-        $date = date("Y-m-d");
-        $checkdata = DB::table('alf_timeattendance_student')->where('code_student', $request->username)
-            ->where('date', $date)
             ->count();
 
-        if ($checkdata == 1) {
-            if (time() > strtotime(date('Y-m-d') . '15:00')) {
+        if ($getdata_check > 0) {
 
-                DB::table('alf_timeattendance_student')->insert(
-                    ['code_student' => $request->username,
-                        'code_term' => $term->name_term_id,
-                        'code_school' => $getdata->name_school,
-                        'code_month' => date("m"),
-                        'code_status' => "2",
-                        'inOrOut' => "2",
-                        'timeattendance' => Carbon::now(),
-                        'img' => $request->file,
-                        'date' => Carbon::now(),
-                    ]
-                );
+            $getdata = DB::table('alf_student_info')
+                ->where('student_code_id', $request->username)
+                ->where('name_school', $request->schoolcode)
+                ->first();
 
-                $i = DB::table('alf_notification_user')
-                    ->Where('username_noti', $parent_info->username_id)
-                    ->Where('menu_noti', '11')->first();
+            $key_notification = DB::table('alf_key_notification')
+                ->where('code_reg', $request->username)
+                ->where('login_status', '1')
+                ->get();
 
-                $y = $i->count_noti + 1;
-                DB::table('alf_notification_user')
-                    ->Where('username_noti', $parent_info->username_id)
-                    ->Where('menu_noti', '11')
-                    ->update(['count_noti' => $y]);
-
-                if ($key_notification->count() > 0) {
-
-                    foreach ($key_notification as $item) {
-
-                        $key[] = $item->player_id;
-
-                    }
-
-                    $heading = array(
-                        "en" => "แจ้งการเข้า-ออกโรงเรียน",
-                    );
-
-                        $content = array(
-                            "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $request->date .' น.',
-                        );
-
-
-
-                    $fields = array(
-                        'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
-                        'include_player_ids' => $key,
-                        'data' => array("foo" => "bar"),
-                        'contents' => $content,
-                        'headings' => $heading,
-                    );
-
-                    $fields = json_encode($fields);
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_HEADER, false);
-                    curl_setopt($ch, CURLOPT_POST, true);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                    $response = curl_exec($ch);
-                    curl_close($ch);
-
-                }
-
-                if ($getdata->consult != "") {
-
-                    $key_notification_consult = DB::table('alf_key_notification')
-                    ->where('code_reg', $getdata->consult)
-                    ->where('login_status', '1')
-                    ->get();
-
-                    if ($key_notification_consult->count() > 0) {
-
-                        foreach ($key_notification_consult as $item) {
-
-                            $key[] = $item->player_id;
-
-                        }
-
-                        $heading = array(
-                            "en" => "แจ้งการเข้า-ออกโรงเรียน",
-                        );
-
-                            $content = array(
-                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $request->date .' น.',
-                            );
-
-
-
-                        $fields = array(
-                            'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
-                            'include_player_ids' => $key,
-                            'data' => array("foo" => "bar"),
-                            'contents' => $content,
-                            'headings' => $heading,
-                        );
-
-                        $fields = json_encode($fields);
-                        $ch = curl_init();
-                        curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_HEADER, false);
-                        curl_setopt($ch, CURLOPT_POST, true);
-                        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                        $response = curl_exec($ch);
-                        curl_close($ch);
-
-                    }
-
-
-                }
-
-            }
-        } else {
+            $parent_info = DB::table('alf_parent_info')
+                ->where('student_parent', $request->username)
+                ->where('school_parent', $request->schoolcode)
+                ->first();
+            $term = DB::table('alf_term_active')
+                ->where('name_school_id', $getdata->name_school)
+                ->where('active', "Y")
+                ->first();
 
             $date = date("Y-m-d");
             $checkdata = DB::table('alf_timeattendance_student')->where('code_student', $request->username)
                 ->where('date', $date)
-                ->where('inOrOut', '1')
                 ->count();
 
-            if ($checkdata == '0') {
-                if (time() > strtotime(date('Y-m-d') . '08:30')) {
-
-                    DB::table('alf_timeattendance_student')->insert(
-                        ['code_student' => $request->username,
-                            'code_term' => $term->name_term_id,
-                            'code_school' => $getdata->name_school,
-                            'code_month' => date("m"),
-                            'code_status' => "3",
-                            'inOrOut' => "1",
-                            'timeattendance' => Carbon::now(),
-
-                            'date' => Carbon::now(),
-                        ]
-                    );
-
-                    $i = DB::table('alf_notification_user')
-                        ->Where('username_noti', $parent_info->username_id)
-                        ->Where('menu_noti', '11')->first();
-                    $y = $i->count_noti + 1;
-                    DB::table('alf_notification_user')
-                        ->Where('username_noti', $parent_info->username_id)
-                        ->Where('menu_noti', '11')
-                        ->update(['count_noti' => $y]);
-
-                        if ($key_notification->count() > 0) {
-
-                            foreach ($key_notification as $item) {
-
-                                $key[] = $item->player_id;
-
-                            }
-
-                            $heading = array(
-                                "en" => "แจ้งการเข้า-ออกโรงเรียน",
-                            );
-
-
-                                $content = array(
-                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $request->date .' น.',
-                                );
-
-
-                            $fields = array(
-                                'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
-                                'include_player_ids' => $key,
-                                'data' => array("foo" => "bar"),
-                                'contents' => $content,
-                                'headings' => $heading,
-                            );
-
-                            $fields = json_encode($fields);
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            curl_setopt($ch, CURLOPT_HEADER, false);
-                            curl_setopt($ch, CURLOPT_POST, true);
-                            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                            $response = curl_exec($ch);
-                            curl_close($ch);
-
-                        }
-
-                    if ($getdata->consult != "") {
-                        $key_notification_consult = DB::table('alf_key_notification')
-                        ->where('code_reg', $getdata->consult)
-                        ->where('login_status', '1')
-                        ->get();
-
-                        if ($key_notification_consult->count() > 0) {
-
-                            foreach ($key_notification_consult as $item) {
-
-                                $key[] = $item->player_id;
-
-                            }
-
-                            $heading = array(
-                                "en" => "แจ้งการเข้า-ออกโรงเรียน",
-                            );
-
-                                $content = array(
-                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $request->date .' น.',
-                                );
-
-
-
-                            $fields = array(
-                                'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
-                                'include_player_ids' => $key,
-                                'data' => array("foo" => "bar"),
-                                'contents' => $content,
-                                'headings' => $heading,
-                            );
-
-                            $fields = json_encode($fields);
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            curl_setopt($ch, CURLOPT_HEADER, false);
-                            curl_setopt($ch, CURLOPT_POST, true);
-                            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                            $response = curl_exec($ch);
-                            curl_close($ch);
-
-                        }
-                    }
-
-                } else {
+            if ($checkdata == 1) {
+                if (time() > strtotime(date('Y-m-d') . '15:00')) {
 
                     DB::table('alf_timeattendance_student')->insert(
                         ['code_student' => $request->username,
@@ -283,9 +51,9 @@ class PythonController extends Controller
                             'code_school' => $getdata->name_school,
                             'code_month' => date("m"),
                             'code_status' => "2",
-                            'inOrOut' => "1",
-                            'timeattendance' => Carbon::now(),
-
+                            'inOrOut' => "2",
+                            'timeattendance' => $request->date,
+                            'img' => $request->file,
                             'date' => Carbon::now(),
                         ]
                     );
@@ -293,6 +61,7 @@ class PythonController extends Controller
                     $i = DB::table('alf_notification_user')
                         ->Where('username_noti', $parent_info->username_id)
                         ->Where('menu_noti', '11')->first();
+
                     $y = $i->count_noti + 1;
                     DB::table('alf_notification_user')
                         ->Where('username_noti', $parent_info->username_id)
@@ -311,12 +80,9 @@ class PythonController extends Controller
                             "en" => "แจ้งการเข้า-ออกโรงเรียน",
                         );
 
-
-                            $content = array(
-                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $request->date .' น.',
-                            );
-
-
+                        $content = array(
+                            "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $request->date . ' น.',
+                        );
 
                         $fields = array(
                             'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
@@ -341,10 +107,11 @@ class PythonController extends Controller
                     }
 
                     if ($getdata->consult != "") {
+
                         $key_notification_consult = DB::table('alf_key_notification')
-                        ->where('code_reg', $getdata->consult)
-                        ->where('login_status', '1')
-                        ->get();
+                            ->where('code_reg', $getdata->consult)
+                            ->where('login_status', '1')
+                            ->get();
 
                         if ($key_notification_consult->count() > 0) {
 
@@ -358,11 +125,9 @@ class PythonController extends Controller
                                 "en" => "แจ้งการเข้า-ออกโรงเรียน",
                             );
 
-                                $content = array(
-                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $request->date .' น.',
-                                );
-
-
+                            $content = array(
+                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $request->date . ' น.',
+                            );
 
                             $fields = array(
                                 'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
@@ -385,15 +150,244 @@ class PythonController extends Controller
                             curl_close($ch);
 
                         }
+
+                    }
+
+                }
+            } else {
+
+                $date = date("Y-m-d");
+                $checkdata = DB::table('alf_timeattendance_student')->where('code_student', $request->username)
+                    ->where('date', $date)
+                    ->where('inOrOut', '1')
+                    ->count();
+
+                if ($checkdata == '0') {
+                    if (time() > strtotime(date('Y-m-d') . '08:30')) {
+
+                        DB::table('alf_timeattendance_student')->insert(
+                            ['code_student' => $request->username,
+                                'code_term' => $term->name_term_id,
+                                'code_school' => $getdata->name_school,
+                                'code_month' => date("m"),
+                                'code_status' => "3",
+                                'inOrOut' => "1",
+                                'timeattendance' => $request->date,
+
+                                'date' => Carbon::now(),
+                            ]
+                        );
+
+                        $i = DB::table('alf_notification_user')
+                            ->Where('username_noti', $parent_info->username_id)
+                            ->Where('menu_noti', '11')->first();
+                        $y = $i->count_noti + 1;
+                        DB::table('alf_notification_user')
+                            ->Where('username_noti', $parent_info->username_id)
+                            ->Where('menu_noti', '11')
+                            ->update(['count_noti' => $y]);
+
+                        if ($key_notification->count() > 0) {
+
+                            foreach ($key_notification as $item) {
+
+                                $key[] = $item->player_id;
+
+                            }
+
+                            $heading = array(
+                                "en" => "แจ้งการเข้า-ออกโรงเรียน",
+                            );
+
+                            $content = array(
+                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $request->date . ' น.',
+                            );
+
+                            $fields = array(
+                                'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
+                                'include_player_ids' => $key,
+                                'data' => array("foo" => "bar"),
+                                'contents' => $content,
+                                'headings' => $heading,
+                            );
+
+                            $fields = json_encode($fields);
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+                            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_HEADER, false);
+                            curl_setopt($ch, CURLOPT_POST, true);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                            $response = curl_exec($ch);
+                            curl_close($ch);
+
+                        }
+
+                        if ($getdata->consult != "") {
+                            $key_notification_consult = DB::table('alf_key_notification')
+                                ->where('code_reg', $getdata->consult)
+                                ->where('login_status', '1')
+                                ->get();
+
+                            if ($key_notification_consult->count() > 0) {
+
+                                foreach ($key_notification_consult as $item) {
+
+                                    $key[] = $item->player_id;
+
+                                }
+
+                                $heading = array(
+                                    "en" => "แจ้งการเข้า-ออกโรงเรียน",
+                                );
+
+                                $content = array(
+                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $request->date . ' น.',
+                                );
+
+                                $fields = array(
+                                    'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
+                                    'include_player_ids' => $key,
+                                    'data' => array("foo" => "bar"),
+                                    'contents' => $content,
+                                    'headings' => $heading,
+                                );
+
+                                $fields = json_encode($fields);
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+                                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                curl_setopt($ch, CURLOPT_HEADER, false);
+                                curl_setopt($ch, CURLOPT_POST, true);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+                                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                                $response = curl_exec($ch);
+                                curl_close($ch);
+
+                            }
+                        }
+
+                    } else {
+
+                        DB::table('alf_timeattendance_student')->insert(
+                            ['code_student' => $request->username,
+                                'code_term' => $term->name_term_id,
+                                'code_school' => $getdata->name_school,
+                                'code_month' => date("m"),
+                                'code_status' => "2",
+                                'inOrOut' => "1",
+                                'timeattendance' => $request->date,
+
+                                'date' => Carbon::now(),
+                            ]
+                        );
+
+                        $i = DB::table('alf_notification_user')
+                            ->Where('username_noti', $parent_info->username_id)
+                            ->Where('menu_noti', '11')->first();
+                        $y = $i->count_noti + 1;
+                        DB::table('alf_notification_user')
+                            ->Where('username_noti', $parent_info->username_id)
+                            ->Where('menu_noti', '11')
+                            ->update(['count_noti' => $y]);
+
+                        if ($key_notification->count() > 0) {
+
+                            foreach ($key_notification as $item) {
+
+                                $key[] = $item->player_id;
+
+                            }
+
+                            $heading = array(
+                                "en" => "แจ้งการเข้า-ออกโรงเรียน",
+                            );
+
+                            $content = array(
+                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $request->date . ' น.',
+                            );
+
+                            $fields = array(
+                                'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
+                                'include_player_ids' => $key,
+                                'data' => array("foo" => "bar"),
+                                'contents' => $content,
+                                'headings' => $heading,
+                            );
+
+                            $fields = json_encode($fields);
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+                            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_HEADER, false);
+                            curl_setopt($ch, CURLOPT_POST, true);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                            $response = curl_exec($ch);
+                            curl_close($ch);
+
+                        }
+
+                        if ($getdata->consult != "") {
+                            $key_notification_consult = DB::table('alf_key_notification')
+                                ->where('code_reg', $getdata->consult)
+                                ->where('login_status', '1')
+                                ->get();
+
+                            if ($key_notification_consult->count() > 0) {
+
+                                foreach ($key_notification_consult as $item) {
+
+                                    $key[] = $item->player_id;
+
+                                }
+
+                                $heading = array(
+                                    "en" => "แจ้งการเข้า-ออกโรงเรียน",
+                                );
+
+                                $content = array(
+                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $request->date . ' น.',
+                                );
+
+                                $fields = array(
+                                    'app_id' => "f4333483-f278-46c3-9b7f-a5ea540c4dd5",
+                                    'include_player_ids' => $key,
+                                    'data' => array("foo" => "bar"),
+                                    'contents' => $content,
+                                    'headings' => $heading,
+                                );
+
+                                $fields = json_encode($fields);
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+                                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                curl_setopt($ch, CURLOPT_HEADER, false);
+                                curl_setopt($ch, CURLOPT_POST, true);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+                                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                                $response = curl_exec($ch);
+                                curl_close($ch);
+
+                            }
+                        }
+
                     }
 
                 }
 
             }
 
-        }
+            return $request->id;
 
-        return $request->id;
+        } else {
+            return $request->id;
+        }
 
         /*   $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ichooltecios-firebase-adminsdk-lxmzr-054e4b431c.json');
     $firebase = (new Factory)

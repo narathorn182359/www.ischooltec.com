@@ -205,7 +205,6 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     $getinfopar = DB::table('alf_teacher_info')->where('username_id_tc',$user->username)->first();
     $getuserstudent = DB::table('alf_student_info')
     ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
-    ->where('consult',$getinfopar->username_id_tc)
     ->where('student_code_id',$data['code_student'])
     ->where('name_school',$getinfopar->school_teacher)
     ->first();
@@ -411,8 +410,31 @@ Route::post('register', 'Api\RegisterController@register');
 
 Route::middleware('auth:api')->get('/get_room_techer', function (Request $request) {
     $user = $request->user();
-    $getinfopar = '';
+    $data = DB::table('alf_room_consult')
+    ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
+    ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
+    ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
+    ->select('name_class','room_rm','id_s','name_school_a','school_rm')
+    ->where('id_username_tc_rm',$user->username)->get();
 
-    return response()->json($gettecher);
+    return response()->json(['data'=>$data]);
+});
+
+
+Route::middleware('auth:api')->post('/getlisstudentroom_tc_new', function (Request $request) {
+    $user = $request->user();
+    $data = $request->json()->all();
+
+
+    $liststuden = DB::table('alf_student_info')
+    ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
+    ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
+   
+    ->where('name_school',$data['school_teacher'])
+    ->where('class',$data['school_section'])
+    ->where('room',$data['school_room'])
+    ->paginate(15);
+    return response()->json($liststuden);
 });
 
