@@ -28,7 +28,7 @@ class HomeController extends Controller
         $getuserstudent = DB::table('alf_parent_info')
         ->leftJoin('alf_student_info', 'alf_parent_info.student_parent', '=', 'alf_student_info.student_code_id')
         ->leftJoin('alf_degree_student', 'alf_student_info.degree', '=', 'alf_degree_student.id')
-        ->leftJoin('alf_class_student', 'alf_student_info.class', '=', 'alf_class_student.id')
+        ->leftJoin('alf_class_student', 'alf_student_info.class', '=', 'alf_class_student.id_s')
         ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
         ->leftJoin('alf_teacher_info', 'alf_student_info.consult', '=', 'alf_teacher_info.username_id_tc')     
         ->where('username_id',Auth::user()->username)

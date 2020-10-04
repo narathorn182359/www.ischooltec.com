@@ -38,7 +38,7 @@ class Time_attendanceController extends Controller
 
          $liststuden = DB::table('alf_student_info')
          ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-         ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+         ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
          ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
          ->where('consult',$user[0]->username)
          ->where('name_school',$user[0]->school_teacher)

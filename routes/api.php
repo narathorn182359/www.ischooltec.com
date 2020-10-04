@@ -120,7 +120,7 @@ Route::middleware('auth:api')->post('/searchdata', function (Request $request) {
     $json= DB::table('alf_timeattendance_student')
     ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-    ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
     ->where('code_term',$data['searchTerm'])
@@ -135,7 +135,7 @@ Route::middleware('auth:api')->post('/searchdata', function (Request $request) {
     $json= DB::table('alf_timeattendance_student')
     ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-    ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
     ->where('code_term',$term_active->name_term_id)
@@ -163,7 +163,7 @@ Route::middleware('auth:api')->post('/searchdata2', function (Request $request) 
    $json= DB::table('alf_timeattendance_student')
    ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
    ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-   ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+   ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
    ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
    ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
    ->where('code_student', $getuserstudent->student_code_id)
@@ -187,7 +187,7 @@ Route::middleware('auth:api')->get('/getlisstudentroom_tc', function (Request $r
 
     $liststuden = DB::table('alf_student_info')
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-    ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->where('consult',$user_data->username)
     ->where('name_school',$user_data->school_teacher)
@@ -217,7 +217,7 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     $json= DB::table('alf_timeattendance_student')
     ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-    ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
     ->where('code_term',$data['term'])
@@ -230,7 +230,7 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     $json= DB::table('alf_timeattendance_student')
     ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
-    ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
    // ->where('code_term',$term_active->name_term_id)
@@ -405,3 +405,14 @@ Route::middleware('auth:api')->post('/logout_key', function (Request $request) {
 });
 
 Route::post('register', 'Api\RegisterController@register');
+
+
+
+
+Route::middleware('auth:api')->get('/get_room_techer', function (Request $request) {
+    $user = $request->user();
+    $getinfopar = '';
+
+    return response()->json($gettecher);
+});
+

@@ -70,7 +70,9 @@ class RoomsettingController extends Controller
            $path = $request->file('select_file')->getRealPath();
 
            $data = Excel::load($path)->get();
+
            if($data->count()){
+          
             foreach ($data as $key => $value) {
 
                 if(  $value->id_username_tc_rm != ""){
@@ -78,10 +80,11 @@ class RoomsettingController extends Controller
                     $checkcard = DB::table('alf_room_consult')->where('id_username_tc_rm', $value->id_username_tc_rm)->count();
                     if( $checkcard == 0){
                         $arr[] = [
-                            'id_username_tc_rm' => $value->id_username_tc_rm,
-                            'room_rm' => $value->room_rm,
-                            'section_rm' => $value->section_rm,
-                            'school_rm' => $value->school_rm,
+                            'id_username_tc_rm' =>strval($value->id_username_tc_rm),
+                            'room_rm' => strval($value->room_rm),
+                            'section_rm' => strval($value->section_rm),
+                            'school_rm' => strval($value->school_rm),
+                            'class_rm' => strval($value->class_rm),
                             'created_by' =>Auth::user()->username,
                             'created_at' =>Carbon::now()
                           ];
@@ -89,10 +92,11 @@ class RoomsettingController extends Controller
                         DB::table('alf_room_consult')
                         ->where('id_username_tc_rm', $value->id_username_tc_rm)
                         ->update([
-                            'id_username_tc_rm' => $value->id_username_tc_rm,
-                            'room_rm' => $value->room_rm,
-                            'section_rm' => $value->section_rm,
-                            'school_rm' => $value->school_rm,
+                            'id_username_tc_rm' =>strval($value->id_username_tc_rm),
+                            'room_rm' => strval($value->room_rm),
+                            'section_rm' => strval($value->section_rm),
+                            'school_rm' => strval($value->school_rm),
+                            'class_rm' => strval($value->class_rm),
                             'update_by' =>Auth::user()->username,
                             'updated_at' =>Carbon::now()
                           ]);
@@ -156,7 +160,8 @@ class RoomsettingController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::table('alf_room_consult')->where('id_consult',$id)->delete();
+        return response()->json(['error' => false,], 200);
     }
 
 
@@ -168,6 +173,7 @@ class RoomsettingController extends Controller
             1 => 'section_rm',
             2 => 'school_rm',
             3 => 'name_tc',
+            4 => 'name_class'
 
 
         );
@@ -182,7 +188,10 @@ class RoomsettingController extends Controller
         if (empty($request->input('search.value'))) {
 
             $posts = DB::table('alf_room_consult')
-                ->offset($start)
+                 ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
+                 ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
+                 ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
+                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir)
                 ->get();
@@ -191,6 +200,9 @@ class RoomsettingController extends Controller
 
             $search = $request->input('search.value');
             $posts = DB::table('alf_room_consult')
+                ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
+                ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
+                ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
                 ->Where('section_rm', 'LIKE', "%{$search}%")
                 ->orWhere('school_rm', 'LIKE', "%{$search}%")
                 ->offset($start)
@@ -199,7 +211,10 @@ class RoomsettingController extends Controller
                 ->get();
 
             $totalFiltered = DB::table('alf_room_consult')
-                ->Where('section_rm', 'LIKE', "%{$search}%")
+                 ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
+                 ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
+                 ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
+                 ->Where('section_rm', 'LIKE', "%{$search}%")
                 ->orWhere('school_rm', 'LIKE', "%{$search}%")
                 ->count();
 
@@ -208,13 +223,14 @@ class RoomsettingController extends Controller
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
+                $nestedData['name_class'] = $post->name_class;
                 $nestedData['room_rm'] = $post->room_rm;
                 $nestedData['section_rm'] = $post->section_rm;
-                $nestedData['school_rm'] = $post->school_rm;
-                $nestedData['name_tc'] = '';
+                $nestedData['school_rm'] = $post->name_school_a;
+                $nestedData['name_tc'] = $post->titel_teacher. $post->name_teacher. $post->lastname_teacher;
                 $nestedData['options'] = "
-                          &emsp;<a href='' class='btn btn-warning btn-circle btn-xs'>แก้ไข</a>
-                          &emsp;<a href='javascript:void(0)' class='btn btn-danger btn-circle btn-xs  DeleteCategory' data-id=''>ลบ</a>";
+                      
+                          &emsp;<a href='javascript:void(0)' class='btn btn-danger btn-circle btn-xs  deleteRoom' data-id='{$post->id_consult}'>ลบ</a>";
                 $data[] = $nestedData;
             }
         }

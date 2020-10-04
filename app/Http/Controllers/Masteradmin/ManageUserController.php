@@ -581,86 +581,117 @@ class ManageUserController extends Controller
              
             foreach ($data as $key => $request) {
                 if($request->user_group == '3' && $request->username != ''){
-                    DB::table('alf_parent_info')->insert(
-                        ['username_id' => $request->username,
-                         'titel_parent' => $request->titel_parent,
-                         'name_parent' => $request->name_parent,
-                         'lastname_parent' =>$request->lastname_parent,
-                         'phone_parent' =>$request->phone_parent,
-                         'school_parent' =>$request->school_parent,
-                         'student_parent' =>$request->student_parent,
-                         'created_by' => Auth::user()->username,
-                         'created_at' => Carbon::now()
+                    
+                $xcheck = DB::table('users')->where('username',$request->username)->count();
+                   
+              if( $xcheck == 0){
+
+                DB::table('alf_parent_info')->insert(
+                    ['username_id' => $request->username,
+                     'titel_parent' => $request->titel_parent,
+                     'name_parent' => $request->name_parent,
+                     'lastname_parent' =>$request->lastname_parent,
+                     'phone_parent' =>$request->phone_parent,
+                     'school_parent' =>$request->school_parent,
+                     'student_parent' =>$request->student_parent,
+                     'created_by' => Auth::user()->username,
+                     'created_at' => Carbon::now()
+                     ]
+                );
+                $user = new User;
+                $user->username = $request->username;
+                $user->password =  bcrypt('0000');
+                $user->user_group =  '3';
+                $user->save();
+                $user->assignRole('parent');
+                $nati = DB::table('alf_role_auth')->where("group_id","3")->get();
+                foreach($nati as $item){
+                    DB::table('alf_notification_user')->insert(
+                        ['menu_noti' => $item->id,
+                         'username_noti' => $request->username,
+                         'count_noti' => "0",
+                         'school_noti' =>$request->school_parent
+                    
                          ]
                     );
-                    $user = new User;
-                    $user->username = $request->username;
-                    $user->password =  bcrypt('0000');
-                    $user->user_group =  '3';
-                    $user->save();
-                    $user->assignRole('parent');
-                    $nati = DB::table('alf_role_auth')->where("group_id","3")->get();
-                    foreach($nati as $item){
-                        DB::table('alf_notification_user')->insert(
-                            ['menu_noti' => $item->id,
-                             'username_noti' => $request->username,
-                             'count_noti' => "0",
-                             'school_noti' =>$request->school_parent
-                        
-                             ]
-                        );
-                    }
+                }
+
+              }else{
+
+                DB::table('alf_parent_info')
+                ->where('username_id',$request->username)
+                ->update(
+                    ['username_id' => $request->username,
+                     'titel_parent' => $request->titel_parent,
+                     'name_parent' => $request->name_parent,
+                     'lastname_parent' =>$request->lastname_parent,
+                     'phone_parent' =>$request->phone_parent,
+                     'school_parent' =>$request->school_parent,
+                     'student_parent' =>$request->student_parent,
+                     'created_by' => Auth::user()->username,
+                     'created_at' => Carbon::now()
+                     ]
+                );
+
+              }
+              
                 }
                 if($request->user_group == '4' && $request->username != ''){
-                    DB::table('alf_teacher_info')->insert(
-                        ['username_id_tc' => $request->username_id_tc,
-                         'titel_teacher' => $request->titel_teacher,
-                         'name_teacher' => $request->name_teacher,
-                         'lastname_teacher' =>$request->lastname_teacher,
-                         'phone_teacher' =>$request->phone_teacher,
-                         'school_teacher' =>$request->school_teacher,
-                         'school_section' =>$request->school_section,
-                         'school_room' =>$request->school_room,
-                         'created_by' => Auth::user()->username,
-                         'created_at' => Carbon::now()
-                         ]
-                    );
-                    $user = new User;
-                    $user->username = $request->username;
-                    $user->password = bcrypt('0000');
-                    $user->user_group = '4';
-                    $user->save();
-                    $user->assignRole('teacher');
-                    $nati = DB::table('alf_role_auth')->where("group_id","4")->get();
-                    foreach($nati as $item){
-                        DB::table('alf_notification_user')->insert(
-                            ['menu_noti' => $item->id,
-                             'username_noti' => $request->username,
-                             'count_noti' => "0",
-                             'school_noti' =>$request->school_teacher
-                        
+
+
+                    $ccheck = DB::table('users')->where('username',$request->username)->count();
+                   
+                    if( $ccheck == 0){
+
+                        DB::table('alf_teacher_info')->insert(
+                            ['username_id_tc' => $request->username_id_tc,
+                             'titel_teacher' => $request->titel_teacher,
+                             'name_teacher' => $request->name_teacher,
+                             'lastname_teacher' =>$request->lastname_teacher,
+                             'phone_teacher' =>$request->phone_teacher,
+                             'school_teacher' =>$request->school_teacher,
+                             'school_section' =>$request->school_section,
+                             'school_room' =>$request->school_room,
+                             'created_by' => Auth::user()->username,
+                             'created_at' => Carbon::now()
+                             ]
+                        );
+                        $user = new User;
+                        $user->username = $request->username;
+                        $user->password = bcrypt('0000');
+                        $user->user_group = '4';
+                        $user->save();
+                        $user->assignRole('teacher');
+                        $nati = DB::table('alf_role_auth')->where("group_id","4")->get();
+                        foreach($nati as $item){
+                            DB::table('alf_notification_user')->insert(
+                                ['menu_noti' => $item->id,
+                                 'username_noti' => $request->username,
+                                 'count_noti' => "0",
+                                 'school_noti' =>$request->school_teacher
+                            
+                                 ]
+                            );
+                        }
+
+                    }else{
+                        DB::table('alf_teacher_info')
+                        ->where('username_id_tc',$request->username)
+                        ->update(
+                            ['username_id' => $request->username,
+                             'titel_parent' => $request->titel_parent,
+                             'name_parent' => $request->name_parent,
+                             'lastname_parent' =>$request->lastname_parent,
+                             'phone_parent' =>$request->phone_parent,
+                             'school_parent' =>$request->school_parent,
+                             'student_parent' =>$request->student_parent,
+                             'created_by' => Auth::user()->username,
+                             'created_at' => Carbon::now()
                              ]
                         );
                     }
-                    
-
-
-
-
                 }
-              
-
-
-
-
-
-
-
-
-
             }
-
-          
         }
 
         return back()->with('success', 'Insert Record successfully.');

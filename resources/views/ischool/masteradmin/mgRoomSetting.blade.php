@@ -46,7 +46,9 @@
       <div class="box-body table-responsive no-padding">
             <table class="table table-condensed" id='roomsetting'>
                 <thead>
+                  <th>ชั้น</th>
                     <th>ห้อง</th>
+                    <th>Section</th>
                     <th>ชื่อครู</th>
                     <th>โรงเรืยน</th>
                     <th>เพิ่มเติม</th>
