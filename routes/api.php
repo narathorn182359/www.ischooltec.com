@@ -54,7 +54,6 @@ Route::middleware('auth:api')->get('/UserLisrMenu', function (Request $request) 
     $user = $request->user();
     $data= DB::table('alf_role_auth')
     ->leftJoin('alf_notification_user', 'alf_role_auth.id', '=', 'alf_notification_user.menu_noti')
-
     ->where('group_id',$user->user_group)
     ->where('username_noti',$user->username)
     ->get();
@@ -192,7 +191,7 @@ Route::middleware('auth:api')->get('/getlisstudentroom_tc', function (Request $r
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->where('consult',$user_data->username)
     ->where('name_school',$user_data->school_teacher)
-    ->where('class',$user_data->school_section)
+    ->where('degree',$user_data->school_section)
     ->where('room',$user_data->school_room)
     ->paginate(15);
     return response()->json($liststuden);
@@ -213,6 +212,7 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     $term_active = DB::table('alf_term_active')->where('active','Y')
     ->where('name_school_id',$getinfopar->school_teacher)
    ->first();
+
    if($data['term'] != "" && $data['month'] != "" &&  $data['status'] != "" ){
     $json= DB::table('alf_timeattendance_student')
     ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
@@ -225,7 +225,7 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     ->where('code_month',$data['month'])
     ->where('code_student', $getuserstudent->student_code_id)
     ->where('name_school',$getinfopar->school_teacher)
-    ->get();
+    ->paginate(15);
 }else{
     $json= DB::table('alf_timeattendance_student')
     ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
@@ -233,11 +233,11 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     ->leftJoin('alf_class_student', 'alf_class_student.id', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
     ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
-    ->where('code_term',$term_active->name_term_id)
-    ->where('code_month',date("m"))
+   // ->where('code_term',$term_active->name_term_id)
+    //->where('code_month',date("m"))
     ->where('code_student', $getuserstudent->student_code_id)
     ->where('name_school',$getinfopar->school_teacher)
-    ->get();
+    ->paginate(15);
 
 
 
@@ -282,7 +282,11 @@ Route::middleware('auth:api')->get('/deletenoti', function (Request $request) {
     ->Where('username_noti',$user->username)
     ->Where('menu_noti','11')
     ->update(['count_noti' => 0]);
-
+    
+    DB::table('alf_notification_user')
+    ->Where('username_noti',$user->username)
+    ->Where('menu_noti','18')
+    ->update(['count_noti' => 0]);
 
     return response()->json($user);
 });
