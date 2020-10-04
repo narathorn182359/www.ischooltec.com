@@ -8,7 +8,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>AdminLTE 2 | Starter</title>
+  <title>ISCH | Starter</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="{{asset('adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
@@ -18,7 +18,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('adminLTE/bower_components/Ionicons/css/ionicons.min.css')}}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('adminLTE/dist/css/AdminLTE.min.css')}}">
-
+ <!-- DataTables -->
+ <link rel="stylesheet" href="{{asset('adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css')}}">
   <!-- Select2 -->
   <link rel="stylesheet" href="{{asset('adminLTE/bower_components/select2/dist/css/select2.min.css')}}">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
@@ -47,7 +48,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   }
   #container {
   display: flex;
-  justify-content:center; 
+  justify-content:center;
 }
 table.table.table-striped.table-bordered td,
 
@@ -203,7 +204,7 @@ desired effect
   </footer>
 
 
- 
+
 </div>
 <!-- ./wrapper -->
 
@@ -218,11 +219,12 @@ desired effect
 <!-- AdminLTE App -->
 <script src="{{asset('adminLTE/dist/js/adminlte.min.js')}}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
-
+<script src="{{asset('adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
 @yield('scriptUser')
 @yield('scriptSchool')
 @yield('scriptSchoolShow')
-
+@yield('scripttable')
 
 
 

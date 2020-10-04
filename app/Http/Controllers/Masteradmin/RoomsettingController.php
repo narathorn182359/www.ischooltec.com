@@ -63,7 +63,55 @@ class RoomsettingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'select_file'  => 'required|mimes:xls,xlsx'
+           ]);
+
+           $path = $request->file('select_file')->getRealPath();
+
+           $data = Excel::load($path)->get();
+           if($data->count()){
+            foreach ($data as $key => $value) {
+
+                if(  $value->id_username_tc_rm != ""){
+
+                    $checkcard = DB::table('alf_room_consult')->where('id_username_tc_rm', $value->id_username_tc_rm)->count();
+                    if( $checkcard == 0){
+                        $arr[] = [
+                            'id_username_tc_rm' => $value->id_username_tc_rm,
+                            'room_rm' => $value->room_rm,
+                            'section_rm' => $value->section_rm,
+                            'school_rm' => $value->school_rm,
+                            'created_by' =>Auth::user()->username,
+                            'created_at' =>Carbon::now()
+                          ];
+                    }else{
+                        DB::table('alf_room_consult')
+                        ->where('id_username_tc_rm', $value->id_username_tc_rm)
+                        ->update([
+                            'id_username_tc_rm' => $value->id_username_tc_rm,
+                            'room_rm' => $value->room_rm,
+                            'section_rm' => $value->section_rm,
+                            'school_rm' => $value->school_rm,
+                            'update_by' =>Auth::user()->username,
+                            'updated_at' =>Carbon::now()
+                          ]);
+
+
+
+                    }
+
+                }
+
+            }
+
+            if(!empty($arr))
+            {
+             DB::table('alf_room_consult')->insert($arr);
+            }
+        }
+
+        return back()->with('success', 'Insert Record successfully.');
     }
 
     /**
@@ -110,4 +158,85 @@ class RoomsettingController extends Controller
     {
         //
     }
+
+
+
+    public function data(Request $request)
+    {
+        $columns = array(
+            0 => 'room_rm',
+            1 => 'section_rm',
+            2 => 'school_rm',
+            3 => 'name_tc',
+
+
+        );
+
+        $totalData = DB::table('alf_room_consult')->count();
+        $totalFiltered = $totalData;
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if (empty($request->input('search.value'))) {
+
+            $posts = DB::table('alf_room_consult')
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+        } else {
+
+            $search = $request->input('search.value');
+            $posts = DB::table('alf_room_consult')
+                ->Where('section_rm', 'LIKE', "%{$search}%")
+                ->orWhere('school_rm', 'LIKE', "%{$search}%")
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+            $totalFiltered = DB::table('alf_room_consult')
+                ->Where('section_rm', 'LIKE', "%{$search}%")
+                ->orWhere('school_rm', 'LIKE', "%{$search}%")
+                ->count();
+
+        }
+
+        $data = array();
+        if (!empty($posts)) {
+            foreach ($posts as $post) {
+                $nestedData['room_rm'] = $post->room_rm;
+                $nestedData['section_rm'] = $post->section_rm;
+                $nestedData['school_rm'] = $post->school_rm;
+                $nestedData['name_tc'] = '';
+                $nestedData['options'] = "
+                          &emsp;<a href='' class='btn btn-warning btn-circle btn-xs'>แก้ไข</a>
+                          &emsp;<a href='javascript:void(0)' class='btn btn-danger btn-circle btn-xs  DeleteCategory' data-id=''>ลบ</a>";
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data,
+        );
+
+        echo json_encode($json_data);
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

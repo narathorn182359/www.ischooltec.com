@@ -59,10 +59,13 @@ Route::resource('mgmasetergroup', 'Masteradmin\ManageGroupUserController')->name
     'create' => 'mgmasetergroup.create',
     'store'  => 'mgmasetergroup.store'
 ]);
+
 Route::resource('roomsetting', 'Masteradmin\RoomsettingController')->names([
     'create' => 'roomsetting.create',
     'store'  => 'roomsetting.store'
 ]);
+Route::post('/roomsettingdata', 'Masteradmin\RoomsettingController@data');
+
 Route::resource('mgteacherinfo', 'Teacher\InfoStudentController');
 Route::resource('class-schedule-teacher', 'Teacher\ScheduleController');
 Route::resource('time-attendance-teacher', 'Teacher\Time_attendanceController');
