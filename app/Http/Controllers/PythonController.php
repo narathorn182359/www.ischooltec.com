@@ -11,6 +11,13 @@ class PythonController extends Controller
     public function store(Request $request)
     {
 
+
+
+        list($day,$month,$year,$hour,$min,$sec) = explode("/",date('d/m/Y/h/i/s'));
+        $yearsum = (int)$year+543;
+        $datecon = $day.'/'.$month.'/'.$yearsum.' '.$hour.':'.$min.':'.$sec;
+
+
         $getdata_check = DB::table('alf_student_info')
             ->where('student_code_id', $request->username)
             ->where('name_school', $request->schoolcode)
@@ -43,7 +50,7 @@ class PythonController extends Controller
                 ->count();
 
             if ($checkdata == 1) {
-                if (time() > strtotime(date('Y-m-d') . '15:00')) {
+                if (time() > strtotime(date('Y-m-d') . '14:30')) {
 
                     DB::table('alf_timeattendance_student')->insert(
                         ['code_student' => $request->username,
@@ -52,7 +59,7 @@ class PythonController extends Controller
                             'code_month' => date("m"),
                             'code_status' => "2",
                             'inOrOut' => "2",
-                            'timeattendance' => $request->date,
+                            'timeattendance' => $datecon,
                             'img' => $request->file,
                             'date' => Carbon::now(),
                         ]
@@ -81,7 +88,7 @@ class PythonController extends Controller
                         );
 
                         $content = array(
-                            "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $request->date . ' น.',
+                            "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $datecon . ' น.',
                         );
 
                         $fields = array(
@@ -126,7 +133,7 @@ class PythonController extends Controller
                             );
 
                             $content = array(
-                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $request->date . ' น.',
+                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'ออกจากโรงเรียน ' . $datecon . ' น.',
                             );
 
                             $fields = array(
@@ -172,7 +179,7 @@ class PythonController extends Controller
                                 'code_month' => date("m"),
                                 'code_status' => "3",
                                 'inOrOut' => "1",
-                                'timeattendance' => $request->date,
+                                'timeattendance' => $datecon,
 
                                 'date' => Carbon::now(),
                             ]
@@ -200,7 +207,7 @@ class PythonController extends Controller
                             );
 
                             $content = array(
-                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $request->date . ' น.',
+                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $datecon . ' น.',
                             );
 
                             $fields = array(
@@ -244,7 +251,7 @@ class PythonController extends Controller
                                 );
 
                                 $content = array(
-                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $request->date . ' น.',
+                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $datecon . ' น.',
                                 );
 
                                 $fields = array(
@@ -279,7 +286,7 @@ class PythonController extends Controller
                                 'code_month' => date("m"),
                                 'code_status' => "2",
                                 'inOrOut' => "1",
-                                'timeattendance' => $request->date,
+                                'timeattendance' => $datecon,
 
                                 'date' => Carbon::now(),
                             ]
@@ -307,7 +314,7 @@ class PythonController extends Controller
                             );
 
                             $content = array(
-                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $request->date . ' น.',
+                                "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . ' เข้าโรงเรียน ' . $datecon . ' น.',
                             );
 
                             $fields = array(
@@ -351,7 +358,7 @@ class PythonController extends Controller
                                 );
 
                                 $content = array(
-                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $request->date . ' น.',
+                                    "en" => $getdata->title . "" . $getdata->name . " " . $getdata->lastname . 'เข้าโรงเรียน ' . $datecon . ' น.',
                                 );
 
                                 $fields = array(
