@@ -237,9 +237,6 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     ->where('code_student', $getuserstudent->student_code_id)
     ->where('name_school',$getinfopar->school_teacher)
     ->paginate(15);
-
-
-
 }
     return response($json,200)->header('Content-Type', 'application/json');
 });
@@ -430,11 +427,43 @@ Route::middleware('auth:api')->post('/getlisstudentroom_tc_new', function (Reque
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
     ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
-   
     ->where('name_school',$data['school_teacher'])
     ->where('class',$data['school_section'])
     ->where('room',$data['school_room'])
     ->paginate(15);
     return response()->json($liststuden);
+});
+
+
+
+
+Route::middleware('auth:api')->post('/searchdata_detail_time_v2', function (Request $request) {
+    $data = $request->json()->all();
+    $user = $request->user();
+    $getinfopar = DB::table('alf_teacher_info')->where('username_id_tc',$user->username)->first();
+    $getuserstudent = DB::table('alf_student_info')
+    ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
+    ->where('student_code_id',$data['code_student'])
+    ->where('name_school',$getinfopar->school_teacher)
+    ->first();
+    $term_active = DB::table('alf_term_active')->where('active','Y')
+    ->where('name_school_id',$getinfopar->school_teacher)
+   ->first();
+
+   $date_cut = explode(" ",$data['date']);
+
+    $json= DB::table('alf_timeattendance_student')
+    ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
+    ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
+    ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
+    ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
+   // ->where('code_term',$term_active->name_term_id)
+    ->where('date', $date_cut[0])
+    ->where('code_student', $getuserstudent->student_code_id)
+    ->where('name_school',$getinfopar->school_teacher)
+    ->get();
+
+    return response($json,200)->header('Content-Type', 'application/json');
 });
 
