@@ -12,7 +12,7 @@ class PythonController extends Controller
     {
 
 
-
+        date_default_timezone_set('Asia/Bangkok');
         list($day,$month,$year,$hour,$min,$sec) = explode("/",date('d/m/Y/h/i/s'));
         $yearsum = (int)$year+543;
         $datecon = $day.'/'.$month.'/'.$yearsum.' '.$hour.':'.$min.':'.$sec;
@@ -51,7 +51,12 @@ class PythonController extends Controller
 
             if ($checkdata == 1) {
                 if (time() > strtotime(date('Y-m-d') . '14:30')) {
-
+                    DB::table('alf_student_info')
+                    ->where('student_code_id',$request->username)
+                    ->where('name_school',$getdata->name_school)
+                    ->update([
+                        'daily_time' => '1',
+                    ]);
                     DB::table('alf_timeattendance_student')->insert(
                         ['code_student' => $request->username,
                             'code_term' => $term->name_term_id,
@@ -171,7 +176,12 @@ class PythonController extends Controller
 
                 if ($checkdata == '0') {
                     if (time() > strtotime(date('Y-m-d') . '08:30')) {
-
+                        DB::table('alf_student_info')
+                        ->where('student_code_id',$request->username)
+                        ->where('name_school',$getdata->name_school)
+                        ->update([
+                            'daily_time' => '1',
+                        ]);
                         DB::table('alf_timeattendance_student')->insert(
                             ['code_student' => $request->username,
                                 'code_term' => $term->name_term_id,

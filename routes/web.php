@@ -97,6 +97,22 @@ Route::post('mgadminschool_d/{id}/{dd}', 'AdminSchool\ManageUserController@destr
 
 
 
+Route::get('/daily_time', function () {
+  
+    $school = DB::table('alf_name_school')->get();
+     
+    foreach($school as $value){
+        DB::table('alf_student_info')
+        ->update([
+            'daily_time' => '0',
+        ]);
+
+    }
+
+
+
+    return 'ok';
+});
 
 
 
