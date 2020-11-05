@@ -92,10 +92,7 @@ Route::middleware('auth:api')->get('/dataStatus', function (Request $request) {
 Route::middleware('auth:api')->get('/public-relations', function (Request $request) {
     $user = $request->user();
     $listinfo = DB::table('alf_parent_info')->where('username_id',$user->username)->first();
-    $relations = DB::table('alf_public_relations')
-    ->where('id_school',$listinfo->school_parent)
-    
-    ->orderBy('created_at','DESC')->get();
+    $relations = DB::table('alf_public_relations')->where('id_school',$listinfo->school_parent)->orderBy('created_at','DESC')->get();
     return response()->json($relations);
 });
 
@@ -497,18 +494,3 @@ Route::middleware('auth:api')->post('/searchdata_detail_time_st_v2', function (R
 
     return response($json,200)->header('Content-Type', 'application/json');
 });
-
-
-Route::middleware('auth:api')->get('/get_room_techer', function (Request $request) {
-    $user = $request->user();
-    $data = DB::table('alf_room_consult')
-    ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
-    ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
-    ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
-    ->select('name_class','room_rm','id_s','name_school_a','school_rm')
-    ->where('id_username_tc_rm',$user->username)->get();
-
-    return response()->json(['data'=>$data]);
-});
-
-
