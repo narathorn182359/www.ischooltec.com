@@ -92,7 +92,10 @@ Route::middleware('auth:api')->get('/dataStatus', function (Request $request) {
 Route::middleware('auth:api')->get('/public-relations', function (Request $request) {
     $user = $request->user();
     $listinfo = DB::table('alf_parent_info')->where('username_id',$user->username)->first();
-    $relations = DB::table('alf_public_relations')->where('id_school',$listinfo->school_parent)->orderBy('created_at','DESC')->get();
+    $relations = DB::table('alf_public_relations')
+    ->where('id_school',$listinfo->school_parent)
+    
+    ->orderBy('created_at','DESC')->get();
     return response()->json($relations);
 });
 
