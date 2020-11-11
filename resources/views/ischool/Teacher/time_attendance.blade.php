@@ -31,7 +31,8 @@
                             <td style="width: 200px" >{{ $liststudens->title}} {{$liststudens->name}}  {{$liststudens->lastname}} </td>
                             <td style="width: 150px" >
                                 <a class="btn btn-info btn-xs  viewStundentDetail"    href="{{url('time_attendance_teacherst/'.Crypt::encrypt($liststudens->student_code_id).'/'.Crypt::encrypt($liststudens->name_school))}}"><i class="fa fa-clock-o" ></i> ดูเวลาเข้า-ออก</a>
-                            </td>
+                                <a class="btn btn-success btn-xs  "    href=""></i>ผลการเรียน</a>
+                              </td>
                          </tr>
                        @empty
                        <tr>

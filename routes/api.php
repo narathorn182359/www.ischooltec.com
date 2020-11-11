@@ -92,8 +92,54 @@ Route::middleware('auth:api')->get('/dataStatus', function (Request $request) {
 Route::middleware('auth:api')->get('/public-relations', function (Request $request) {
     $user = $request->user();
     $listinfo = DB::table('alf_parent_info')->where('username_id',$user->username)->first();
-    $relations = DB::table('alf_public_relations')->where('id_school',$listinfo->school_parent)->orderBy('created_at','DESC')->get();
-    return response()->json($relations);
+    $stuendeninfo = DB::table('alf_student_info')->where('student_code_id',$listinfo->student_parent)->first();
+
+    $relations_2 = DB::table('alf_public_relations')
+    ->where('id_school',$listinfo->school_parent)
+    ->where('class_id', $stuendeninfo->class)
+    ->orderBy('created_at','DESC')->get();
+
+    $relations = DB::table('alf_public_relations')
+    ->where('class_id', null)
+    ->where('id_school',$listinfo->school_parent)
+    ->orderBy('created_at','DESC')->get();
+      $arr = array();
+      unset($arr);
+    foreach($relations as $loop){
+        $data =  array(
+            'id' => $loop->id,
+            'id_school' => $loop->id_school,
+            'class_id' => $loop->class_id,
+            'text' => $loop->text,
+            'headnew' => $loop->headnew,
+            'img' => $loop->img,
+            'created_at' => $loop->created_at,
+            'updated_at' => $loop->updated_at,
+
+        );
+   $arr[] = $data;
+    }
+
+    foreach($relations_2 as $loop){
+        $data =  array(
+            'id' => $loop->id,
+            'id_school' => $loop->id_school,
+            'class_id' => $loop->class_id,
+            'text' => $loop->text,
+            'headnew' => $loop->headnew,
+            'img' => $loop->img,
+            'created_at' => $loop->created_at,
+            'updated_at' => $loop->updated_at,
+
+        );
+   $arr[] = $data;
+    }
+
+
+
+   
+   
+    return response()->json($arr);
 });
 
 Route::middleware('auth:api')->get('/public-relations-tc', function (Request $request) {

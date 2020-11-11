@@ -20,12 +20,14 @@ $(function () {
     var  id_new  =   $('#id_new').val();
     var  headnew   = $('#headnew').val();
     var  detailnew   = $('#detailnew').val();
+    var   class_id   = $('#class_id').val();
     var  form_data = new FormData();
     form_data.append('fileimg',$("#fileimg")[0].files[0]);
   
     form_data.append('headnew', headnew);
     form_data.append('id_new', id_new);
     form_data.append('detailnew', detailnew);
+    form_data.append('class_id', class_id);
       $.ajax({
         data: form_data,
         url: "/mgadminnewschool",
@@ -62,6 +64,8 @@ $('body').on('click', '.editNew', function () {
     $('#id_new').val(data[0].id);
     $('#headnew').val(data[0].headnew);
     $('#detailnew').val(data[0].text);
+    $('#class_id').val(data[0].class_id);
+    
    
   })
 });
