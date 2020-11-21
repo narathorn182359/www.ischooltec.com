@@ -10,7 +10,6 @@
             <div class="box-header">
                     <a href="javascript:void(0)" class="btn btn-success createNew">เพิ่มข่าวใหม่</a>
               <h3 class="box-title">รายการข่าวทั้งหมด</h3>
-             
               <div class="box-tools">
                 <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
                   <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
@@ -75,19 +74,6 @@
     </div>
   </div>
     @endforeach   
-  
-
-
-
-
-
-
-
-
-
-
-
-
 
       <div class="modal fade" id="modal-addnew">
             <div class="modal-dialog">
@@ -100,11 +86,20 @@
                 <form id="form-addnew">
                     <input type="hidden" name="id_new" id="id_new"  value="0"/>
                 <div class="modal-body">
-                        <div class="form-group">
+                  <div class="form-group">
+                    <label for="addnew">ระดับชั้น</label>
+                   <select name="class_id" id="class_id" class="form-control">
+                     <option value="">ทั้งหมด</option>
+                     @foreach ($class_school as $item)
+                   <option value="{{$item->id_s}}">{{$item->name_class}}</option>
+                     @endforeach
+                   </select>
+                  </div>
+                          <div class="form-group">
                                 <label for="addnew">รูปภาพ</label>
-                                <input type="file"   name="fileimg" id="fileimg"  >
+                                <input type="file"   name="fileimg" id="fileimg"  required>
                               </div>
-                        <div class="form-group">
+                          <div class="form-group">
                                 <label for="addnew">หัวข้อเรื่อง</label>
                                 <input type="text" class="form-control" id="headnew" name="headnew"   required>
                               </div>

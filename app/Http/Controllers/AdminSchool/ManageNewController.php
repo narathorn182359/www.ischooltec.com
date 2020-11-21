@@ -21,11 +21,12 @@ class ManageNewController extends Controller
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
         $school = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->get();
         $listgetnew = DB::table('alf_public_relations')->where('id_school',$school[0]->school_adminschool)->orderBy('created_at','DESC')->get();
-        
+        $class_school = DB::table('alf_class_student')->get();
         
         $data = array(
             'listmenu'=>$listmenu,
-             'listgetnew'=> $listgetnew
+             'listgetnew'=> $listgetnew,
+             'class_school' => $class_school
              );
 
 
@@ -64,11 +65,12 @@ class ManageNewController extends Controller
       if($request->id_new == "0"){
           
         DB::table('alf_public_relations')->insert(
-            ['id_school' => $school[0]->school_adminschool,
+            [ 'id_school' => $school[0]->school_adminschool,
+              'class_id' => $request->class_id,
               'headnew' =>$request->headnew,
-             'text' => $request->detailnew,
-             'img' =>$filename ,
-             'created_at' => Carbon::now()
+              'text' => $request->detailnew,
+              'img' =>$filename ,
+              'created_at' => Carbon::now()
              ]
         );
       }else{
@@ -78,8 +80,9 @@ class ManageNewController extends Controller
             ['id_school' => $school[0]->school_adminschool,
               'headnew' =>$request->headnew,
              'text' => $request->detailnew,
+             'class_id' => $request->class_id,
              'img' =>$filename ,
-             'created_at' => Carbon::now()
+             'updated_at' => Carbon::now()
              ]
         );
       }

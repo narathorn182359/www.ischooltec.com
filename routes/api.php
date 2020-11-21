@@ -92,8 +92,54 @@ Route::middleware('auth:api')->get('/dataStatus', function (Request $request) {
 Route::middleware('auth:api')->get('/public-relations', function (Request $request) {
     $user = $request->user();
     $listinfo = DB::table('alf_parent_info')->where('username_id',$user->username)->first();
-    $relations = DB::table('alf_public_relations')->where('id_school',$listinfo->school_parent)->orderBy('created_at','DESC')->get();
-    return response()->json($relations);
+    $stuendeninfo = DB::table('alf_student_info')->where('student_code_id',$listinfo->student_parent)->first();
+
+    $relations_2 = DB::table('alf_public_relations')
+    ->where('id_school',$listinfo->school_parent)
+    ->where('class_id', $stuendeninfo->class)
+    ->orderBy('created_at','DESC')->get();
+
+    $relations = DB::table('alf_public_relations')
+    ->where('class_id', null)
+    ->where('id_school',$listinfo->school_parent)
+    ->orderBy('created_at','DESC')->get();
+      $arr = array();
+      unset($arr);
+    foreach($relations as $loop){
+        $data =  array(
+            'id' => $loop->id,
+            'id_school' => $loop->id_school,
+            'class_id' => $loop->class_id,
+            'text' => $loop->text,
+            'headnew' => $loop->headnew,
+            'img' => $loop->img,
+            'created_at' => $loop->created_at,
+            'updated_at' => $loop->updated_at,
+
+        );
+   $arr[] = $data;
+    }
+
+    foreach($relations_2 as $loop){
+        $data =  array(
+            'id' => $loop->id,
+            'id_school' => $loop->id_school,
+            'class_id' => $loop->class_id,
+            'text' => $loop->text,
+            'headnew' => $loop->headnew,
+            'img' => $loop->img,
+            'created_at' => $loop->created_at,
+            'updated_at' => $loop->updated_at,
+
+        );
+   $arr[] = $data;
+    }
+
+
+
+   
+   
+    return response()->json($arr);
 });
 
 Route::middleware('auth:api')->get('/public-relations-tc', function (Request $request) {
@@ -168,6 +214,7 @@ Route::middleware('auth:api')->post('/searchdata2', function (Request $request) 
    ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
    ->where('code_student', $getuserstudent->student_code_id)
    ->where('name_school',$getinfopar->school_parent)
+   ->orderBy('date', 'DESC')
    ->get();
     return response($json,200)->header('Content-Type', 'application/json');
 });
@@ -237,9 +284,6 @@ Route::middleware('auth:api')->post('/searchdata_detail_time', function (Request
     ->where('code_student', $getuserstudent->student_code_id)
     ->where('name_school',$getinfopar->school_teacher)
     ->paginate(15);
-
-
-
 }
     return response($json,200)->header('Content-Type', 'application/json');
 });
@@ -430,7 +474,6 @@ Route::middleware('auth:api')->post('/getlisstudentroom_tc_new', function (Reque
     ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
     ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
     ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
-   
     ->where('name_school',$data['school_teacher'])
     ->where('class',$data['school_section'])
     ->where('room',$data['school_room'])
@@ -438,3 +481,62 @@ Route::middleware('auth:api')->post('/getlisstudentroom_tc_new', function (Reque
     return response()->json($liststuden);
 });
 
+
+
+
+Route::middleware('auth:api')->post('/searchdata_detail_time_v2', function (Request $request) {
+    $data = $request->json()->all();
+    $user = $request->user();
+    $getinfopar = DB::table('alf_teacher_info')->where('username_id_tc',$user->username)->first();
+    $getuserstudent = DB::table('alf_student_info')
+    ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
+    ->where('student_code_id',$data['code_student'])
+    ->where('name_school',$getinfopar->school_teacher)
+    ->first();
+    $term_active = DB::table('alf_term_active')->where('active','Y')
+    ->where('name_school_id',$getinfopar->school_teacher)
+   ->first();
+
+   $date_cut = explode(" ",$data['date']);
+
+    $json= DB::table('alf_timeattendance_student')
+    ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
+    ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
+    ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
+    ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
+   // ->where('code_term',$term_active->name_term_id)
+    ->where('date', $date_cut[0])
+    ->where('code_student', $getuserstudent->student_code_id)
+    ->where('name_school',$getinfopar->school_teacher)
+    ->get();
+
+    return response($json,200)->header('Content-Type', 'application/json');
+});
+
+
+Route::middleware('auth:api')->post('/searchdata_detail_time_st_v2', function (Request $request) {
+    $data = $request->json()->all();
+    $user = $request->user();
+
+    $getuserstudent = DB::table('alf_student_info')
+    ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
+    ->where('student_code_id', $user->username)
+    ->first();
+  
+
+   $date_cut = explode(" ",$data['date']);
+
+    $json= DB::table('alf_timeattendance_student')
+    ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','=','alf_student_info.student_code_id')
+    ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
+    ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
+    ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
+    ->leftJoin('alf_status_student', 'alf_timeattendance_student.code_status', '=', 'alf_status_student.id')
+   // ->where('code_term',$term_active->name_term_id)
+    ->where('date', $date_cut[0])
+    ->where('code_student', $getuserstudent->student_code_id)
+    ->get();
+
+    return response($json,200)->header('Content-Type', 'application/json');
+});
