@@ -15,7 +15,7 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
 
     /**
      * Show the application dashboard.
@@ -30,7 +30,7 @@ class HomeController extends Controller
         ->leftJoin('alf_degree_student', 'alf_student_info.degree', '=', 'alf_degree_student.id')
         ->leftJoin('alf_class_student', 'alf_student_info.class', '=', 'alf_class_student.id_s')
         ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
-        ->leftJoin('alf_teacher_info', 'alf_student_info.consult', '=', 'alf_teacher_info.username_id_tc')     
+        ->leftJoin('alf_teacher_info', 'alf_student_info.consult', '=', 'alf_teacher_info.username_id_tc')
         ->where('username_id',Auth::user()->username)
         ->get();
         $data = array(
