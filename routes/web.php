@@ -70,6 +70,10 @@ Route::resource('mgteacherinfo', 'Teacher\InfoStudentController');
 Route::resource('class-schedule-teacher', 'Teacher\ScheduleController');
 Route::resource('time-attendance-teacher', 'Teacher\Time_attendanceController');
 Route::get('time_attendance_teacherst/{id}/{school}', 'Teacher\Time_attendanceController@show');
+Route::get('grade/{id}', 'Teacher\Time_attendanceController@grade');
+Route::post('uploadimag/{id}/{idt}','Teacher\Time_attendanceController@uploadImages');
+Route::post('deletegrades', 'Teacher\Time_attendanceController@deletegrades');
+
 Route::get('searchdetil', 'Teacher\Time_attendanceController@search');
 Route::get('/public-relations-tc', 'Teacher\ScheduleController@index_public_relations_tc')->name('index_public_relations_tc-tc');
 Route::get('/contact-school-tc', 'Teacher\ScheduleController@index_contact_school_tc')->name('index_contact_school_tc');
@@ -98,9 +102,9 @@ Route::post('mgadminschool_d/{id}/{dd}', 'AdminSchool\ManageUserController@destr
 
 
 Route::get('/daily_time', function () {
-  
+
     $school = DB::table('alf_name_school')->get();
-     
+
     foreach($school as $value){
         DB::table('alf_student_info')
         ->update([
@@ -131,5 +135,6 @@ Route::get('/route-Clear-all', function() {
     $exitCode = Artisan::call('view:clear');
     return 'ok!';
 });
+
 
 

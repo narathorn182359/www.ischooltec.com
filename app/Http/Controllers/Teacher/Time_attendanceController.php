@@ -54,7 +54,7 @@ class Time_attendanceController extends Controller
 
         return view('ischool.Teacher.time_attendance',$data);
 
-        
+
 
 
 
@@ -96,8 +96,8 @@ class Time_attendanceController extends Controller
         $code_term = Input::get ('code_term');
         $code_month = Input::get ('code_month');
         $code_status = Input::get ('code_status');
-   
-      
+
+
         if( $code_term != "" ||  $code_month != "" ||  $code_status != "" ){
             $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
             $listmonth = DB::table('alf_month')->get();
@@ -135,7 +135,7 @@ class Time_attendanceController extends Controller
         return view('ischool.Teacher.detail_timeattendance',$data)->withDetails($pagination);
        }
         return view('ischool.Teacher.detail_timeattendance',$data)->withMessage ( 'ไม่พบข้อมูล...' );
-       
+
     }else{
 
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
@@ -149,7 +149,7 @@ class Time_attendanceController extends Controller
        ->where('code_student', $decrypted)
         ->where('code_school', $decryptedschool)
         ->get();
-       
+
         $data = array(
             'listmenu'=>$listmenu,
             'liststatus' => $liststatus,
@@ -168,8 +168,8 @@ class Time_attendanceController extends Controller
 
 
     }
-    
-       
+
+
     }
 
     /**
@@ -205,6 +205,75 @@ class Time_attendanceController extends Controller
     {
         //
     }
+
+    public function deletegrades(Request $request)
+    {
+
+        DB::table('alf_grade')->where('id_grade',$request->id)->delete();
+    }
+
+
+    public function grade($id)
+    {
+        $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
+        $decrypted = decrypt($id);
+        $alf_term = DB::table('alf_term')->get();
+        $alf_grade = DB::table('alf_grade')->get();
+
+
+        $studeninfo = DB::table('alf_student_info')
+        ->where('student_code_id',$decrypted)
+        ->first();
+
+        $alf_grade = DB::table('alf_grade')
+        ->where('id_studens',$decrypted)
+        ->where('id_school', $studeninfo->name_school)
+        ->get();
+        $data = array(
+            'listmenu'=>$listmenu,
+            'studeninfo' =>$studeninfo,
+            'alf_term' => $alf_term,
+            'alf_grade' => $alf_grade,
+            'id' => $id
+
+        );
+
+
+        return view('ischool.Teacher.grades',$data);
+    }
+
+
+    public function uploadImages($id ,$idt)
+    {
+        $decrypted = decrypt($id);
+        $studeninfo = DB::table('alf_student_info')
+        ->where('student_code_id',$decrypted)
+        ->first();
+        $imgName = request()->file->getClientOriginalName();
+        request()->file->move(public_path('images'), $imgName);
+        DB::table('alf_grade')->insert([
+        'id_studens' =>$decrypted,
+        'id_school' =>  $studeninfo->name_school,
+        'image' => $imgName,
+        'id_term' => $idt,
+        'created_by' => Auth::user()->username,
+        'created_at' => Carbon::now(),
+        ]);
+        $output = array('uploaded' => 'OK' );
+        return response()->json($output);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
     public function search()
@@ -255,6 +324,6 @@ class Time_attendanceController extends Controller
     }
 
 
-   
+
     }
 }
