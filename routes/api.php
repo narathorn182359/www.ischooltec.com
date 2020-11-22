@@ -540,3 +540,29 @@ Route::middleware('auth:api')->post('/searchdata_detail_time_st_v2', function (R
 
     return response($json,200)->header('Content-Type', 'application/json');
 });
+
+Route::middleware('auth:api')->get('/tearm', function (Request $request) {
+    $user = $request->user();
+    $data =  DB::table('alf_term')->get();
+    return response()->json($data);
+});
+
+
+Route::middleware('auth:api')->post('/grade', function (Request $request) {
+    $data = $request->json()->all();
+    $user = $request->user();
+    $getuserstudent = DB::table('alf_student_info')
+    ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
+    ->where('student_code_id', $user->username)
+    ->first();
+    $json =  DB::table('alf_grade')
+    ->where('id_term',$data['term'])
+    ->where('id_studens', $getuserstudent->student_code_id)
+    ->get();
+    
+    return response()->json($json);
+});
+
+
+
+
