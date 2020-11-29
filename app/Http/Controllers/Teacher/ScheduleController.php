@@ -29,8 +29,19 @@ class ScheduleController extends Controller
     public function index()
     {
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
+        $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+        $alf_name_school ='';
+        if(count($alf_teacher_info) >0){
+            $alf_name_school = DB::table('alf_name_school')
+            ->where('id',$alf_teacher_info[0]->school_teacher)
+            ->first();
+        }
+       
+       
+       
         $data = array(
-            'listmenu'=>$listmenu
+            'listmenu'=>$listmenu,
+            'alf_name_school' =>$alf_name_school
                  );
 
         return view('ischool.Teacher.class_schedule',$data);
@@ -107,8 +118,20 @@ class ScheduleController extends Controller
         $listinfo = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->first(); 
 
         $relations = DB::table('alf_public_relations')->where('id_school',$listinfo->school_teacher)->orderBy('created_at','DESC')->get();
+      
+        $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+        $alf_name_school ='';
+        if(count($alf_teacher_info) >0){
+            $alf_name_school = DB::table('alf_name_school')
+            ->where('id',$alf_teacher_info[0]->school_teacher)
+            ->first();
+        }
+       
+      
+      
         $data = array('listmenu'=>$listmenu,
-                       'relations' => $relations
+                       'relations' => $relations,
+                       'alf_name_school' => $alf_name_school
     
                        );
         return view('ischool.Teacher.public_relations_tc',$data);
@@ -121,8 +144,19 @@ class ScheduleController extends Controller
 
     public function   index_contact_school_tc(){
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
+        $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+        $alf_name_school ='';
+        if(count($alf_teacher_info) >0){
+            $alf_name_school = DB::table('alf_name_school')
+            ->where('id',$alf_teacher_info[0]->school_teacher)
+            ->first();
+        }
+       
+       
+       
         $data = array(
-            'listmenu'=>$listmenu
+            'listmenu'=>$listmenu,
+            'alf_name_school' =>$alf_name_school
                  );
 
         return view('ischool.Teacher.contact_school_tc',$data);

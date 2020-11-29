@@ -73,16 +73,11 @@ Route::get('time_attendance_teacherst/{id}/{school}', 'Teacher\Time_attendanceCo
 Route::get('grade/{id}', 'Teacher\Time_attendanceController@grade');
 Route::post('uploadimag/{id}/{idt}','Teacher\Time_attendanceController@uploadImages');
 Route::post('deletegrades', 'Teacher\Time_attendanceController@deletegrades');
-
 Route::get('searchdetil', 'Teacher\Time_attendanceController@search');
 Route::get('/public-relations-tc', 'Teacher\ScheduleController@index_public_relations_tc')->name('index_public_relations_tc-tc');
 Route::get('/contact-school-tc', 'Teacher\ScheduleController@index_contact_school_tc')->name('index_contact_school_tc');
 Route::get('/floor-teacher-tc', 'Parent\ScheduleController@index_floor_teacher_tc')->name('floor-teacher-tc');
-
 Route::get('/role', 'Masteradmin\ManageRoleUserController@index')->name('role');
-
-
-
 Route::get('/profile', 'Parent\ParentController@index_addten')->name('profile');
 Route::get('/contact-school', 'Parent\ParentController@index_contact')->name('contact-school');
 Route::get('/public-relations', 'Parent\ParentController@index_public_relations')->name('public-relations');
@@ -92,11 +87,12 @@ Route::get('/floor-teacher', 'Parent\ParentController@index_floor_teacher')->nam
 Route::get('/list', 'Parent\ParentController@index_list_att')->name('list');
 
 
+
 //Route::get('/mgadminschool', 'AdminSchool\ManageUserController@index')->name('mgadminschool');
 //Route::post('/mgadminschoolsave', 'AdminSchool\ManageUserController@store')->name('mgadminschoolsave');
 Route::resource('mgadminschool', 'AdminSchool\ManageUserController');
 Route::post('mgadminschool_d/{id}/{dd}', 'AdminSchool\ManageUserController@destroy');
-
+Route::get('/search_useradminschool', 'AdminSchool\ManageUserController@index')->name('search_useradminschool');
 
 
 

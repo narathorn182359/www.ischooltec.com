@@ -115,12 +115,12 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-green fixed sidebar-mini">
+<body class="hold-transition skin-blue fixed sidebar-mini">
 <div class="wrapper">
 
   <!-- Main Header -->
   <header class="main-header">
-
+  
     <!-- Logo -->
   <a href="{{url('home')}}" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
@@ -148,7 +148,7 @@ desired effect
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="{{asset('adminLTE/dist/img/user2-160x160.jpg')}}" class="img-circle" alt="User Image">
+          <img src="{{asset('adminLTE/dist/img/user1.png')}}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p>  {{ Auth::user()->username }}</p>
@@ -183,6 +183,16 @@ desired effect
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+    <section class="content-header">
+      <h1>
+        @if($alf_name_school != '')
+        {{$alf_name_school->name_school_a}}
+        @endif
+      
+        <small>Version 1.0</small>
+      </h1>
+    
+    </section>
     <!-- Content Header (Page header) -->
     @yield('contentheader')
 

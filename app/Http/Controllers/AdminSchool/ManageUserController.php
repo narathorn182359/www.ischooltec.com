@@ -18,10 +18,10 @@ class ManageUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+           $username = $request->username;
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
-       
         $userauth = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->first(); 
 
         $userSchool = DB::table('users')
@@ -29,7 +29,11 @@ class ManageUserController extends Controller
         ->leftJoin('alf_teacher_info', 'users.username', '=', 'alf_teacher_info.username_id_tc')
         ->where('school_parent',$userauth->school_adminschool)
         ->orWhere('school_teacher',$userauth->school_adminschool)
-        ->get();
+        ->where(function($query) use ($username){
+            $query->orWhere('username', 'LIKE', '%' . $username . '%');
+            
+                  
+            })->paginate(15);
         
         $namestudent = DB::table('alf_student_info')->get();
         $namegroup = DB::table('alf_users_group')->where('id', '3')
@@ -38,7 +42,10 @@ class ManageUserController extends Controller
         $namestuden = DB::table('alf_student_info')->where('name_school',$userauth->school_adminschool)->get();
         $nameschool = DB::table('alf_name_school')->get();
 
-
+        $school = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->get();
+        $alf_name_school = DB::table('alf_name_school')
+        ->where('id',$school[0]->school_adminschool)
+        ->first();
 
 
 //dd($userSchool);
@@ -46,6 +53,7 @@ class ManageUserController extends Controller
         $data = array(
             'listmenu'=>$listmenu,
             'userSchool'=> $userSchool,
+            'alf_name_school' =>  $alf_name_school,
             'namegroup' =>  $namegroup,
             'nameschool' => $nameschool,
             'namestuden' => $namestuden

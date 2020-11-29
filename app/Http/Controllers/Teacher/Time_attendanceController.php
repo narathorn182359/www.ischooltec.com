@@ -46,10 +46,20 @@ class Time_attendanceController extends Controller
          ->where('room',$user[0]->school_room)
          ->paginate(15);
 
+         $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+         $alf_name_school ='';
+         if(count($alf_teacher_info) >0){
+             $alf_name_school = DB::table('alf_name_school')
+             ->where('id',$alf_teacher_info[0]->school_teacher)
+             ->first();
+         }
+
+
         $data = array(
             'listmenu'=>$listmenu,
             'liststuden' => $liststuden,
-            'user'    =>  $user
+            'user'    =>  $user,
+            'alf_name_school'=>$alf_name_school
         );
 
         return view('ischool.Teacher.time_attendance',$data);
@@ -120,14 +130,23 @@ class Time_attendanceController extends Controller
             'code_school' => Input::get ('code_school' ),
             'code_student' => Input::get ('code_student' )
           ) );
+          
 
+         $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+         $alf_name_school ='';
+         if(count($alf_teacher_info) >0){
+             $alf_name_school = DB::table('alf_name_school')
+             ->where('id',$alf_teacher_info[0]->school_teacher)
+             ->first();
+         }
           $data = array(
             'listmenu'=>$listmenu,
             'liststatus' => $liststatus,
             'listterm'=> $listterm,
             'listmonth' => $listmonth,
            // 'listtimeatt' => $listtimeatt,
-            'id'         => $id
+            'id'         => $id,
+            'alf_name_school' => $alf_name_school
 
         );
         if (count ( $pagination ) > 0){
@@ -150,13 +169,24 @@ class Time_attendanceController extends Controller
         ->where('code_school', $decryptedschool)
         ->get();
 
+
+
+        $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+        $alf_name_school ='';
+        if(count($alf_teacher_info) >0){
+            $alf_name_school = DB::table('alf_name_school')
+            ->where('id',$alf_teacher_info[0]->school_teacher)
+            ->first();
+        }
+
         $data = array(
             'listmenu'=>$listmenu,
             'liststatus' => $liststatus,
             'listterm'=> $listterm,
             'listmonth' => $listmonth,
             'listtimeatt' => $listtimeatt,
-            'id'         => $id
+            'id'         => $id,
+            'alf_name_school' => $alf_name_school
 
         );
 
@@ -229,12 +259,23 @@ class Time_attendanceController extends Controller
         ->where('id_studens',$decrypted)
         ->where('id_school', $studeninfo->name_school)
         ->get();
+
+
+        $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+        $alf_name_school ='';
+        if(count($alf_teacher_info) >0){
+            $alf_name_school = DB::table('alf_name_school')
+            ->where('id',$alf_teacher_info[0]->school_teacher)
+            ->first();
+        }
+
         $data = array(
             'listmenu'=>$listmenu,
             'studeninfo' =>$studeninfo,
             'alf_term' => $alf_term,
             'alf_grade' => $alf_grade,
-            'id' => $id
+            'id' => $id,
+            'alf_name_school' => $alf_name_school
 
         );
 

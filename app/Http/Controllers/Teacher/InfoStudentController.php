@@ -32,7 +32,20 @@ class InfoStudentController extends Controller
     public function index()
     {
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
-        $data = array('listmenu'=>$listmenu);
+        $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+        $alf_name_school ='';
+        if(count($alf_teacher_info) >0){
+            $alf_name_school = DB::table('alf_name_school')
+            ->where('id',$alf_teacher_info[0]->school_teacher)
+            ->first();
+        }
+       
+       
+       
+        $data = array(
+            'listmenu'=>$listmenu,
+            'alf_name_school' =>$alf_name_school
+                 );
 
         return view('ischool.Teacher.list_info_student',$data);
     }

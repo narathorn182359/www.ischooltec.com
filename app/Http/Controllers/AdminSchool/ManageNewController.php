@@ -20,13 +20,18 @@ class ManageNewController extends Controller
     {
         $listmenu = DB::table('alf_role_auth')->where('group_id',Auth::user()->user_group)->get();
         $school = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->get();
+        
         $listgetnew = DB::table('alf_public_relations')->where('id_school',$school[0]->school_adminschool)->orderBy('created_at','DESC')->get();
         $class_school = DB::table('alf_class_student')->get();
-        
+        $alf_name_school = DB::table('alf_name_school')
+        ->where('id',$school[0]->school_adminschool)
+        ->first();
+
         $data = array(
             'listmenu'=>$listmenu,
              'listgetnew'=> $listgetnew,
-             'class_school' => $class_school
+             'class_school' => $class_school,
+             'alf_name_school' => $alf_name_school
              );
 
 
