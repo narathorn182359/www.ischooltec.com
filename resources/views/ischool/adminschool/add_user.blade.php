@@ -4,7 +4,7 @@
     <div class="row">
       
         <div class="col-md-12">
-          <div class="box box-primary">
+       {{--    <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">ค้นหา </h3>
                 <div class="box-tools pull-right">
@@ -38,71 +38,62 @@
                 </div>
             </form>
             <!-- /.box-footer -->
-        </div>
+        </div> --}}
             <div class="box box-success">
                 <div class="box-header with-border">
-                    <h3 class="box-title">จัดการผู้ใช้</h3>
+                    <h3 class="box-title">จัดการผู้ใช้ (ครู)</h3>
                     <a class="btn btn-success btn-xs createNewUserSchool" data-id="" href="javascript:void(0)"
                         id="createNewQuestionIAF">
                         <i class="fa fa-plus-circle"></i> เพิ่มผู้ใช้
                     </a>
                 </div>
                 <div class="box-body table-responsive no-padding">
-                    <table class="table table-condensed">
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>ชื่อผู้ใช้</th>
-                            <th>ชื่อ-สกุล</th>
-                            <th>กลุ่มผู้ใช้</th>
-                            <th>เพิ่มเติม</th>
-                        </tr>
-                        @foreach ($userSchool as $users)
+                    <table class="table table-condensed"  id="table_admin_userteacher">
+                        <thead>
                             <tr>
-                                <td>
-                                    #
-                                </td>
-                                <td>
-                                    {{ $users->username }}
+                                <th></th>
+                                <th>ชื่อผู้ใช้</th>
+                                <th>ชื่อ - นามสกุล</th>
+                                <th>เพิ่มเติม</th>
 
-                                </td>
-                                <td>
-                                    {{ $users->titel_teacher }}
-                                    {{ $users->name_teacher }}
-                                    {{ $users->lastname_teacher }}
-                                    {{ $users->titel_parent }}
-                                    {{ $users->name_parent }}
-                                    {{ $users->lastname_parent }}
-                                </td>
-                                <td>
-                                    @forelse ($namegroup as $namegroups)
-                                        @if ($users->user_group == $namegroups->id)
-                                            {{ $namegroups->name_group }}
-                                        @endif
-                                    @empty
-                                        ยังได้กำหนด
-                        @endforelse
-                        </td>
-                        <td>
-                            <a class="btn btn-info btn-xs  viewUser" data-id="{{ $users->username }}"
-                                href="javascript:void(0)"><i class="fa fa-eye"></i></a>
-                            <a class="btn btn-warning btn-xs  editUser" data-id="{{ $users->username }}"
-                                href="javascript:void(0)"><i class="fa fa-edit"></i></a>
-                            <a class="btn btn-danger btn-xs   deleteUser_sc" data-id="{{ $users->username }}"
-                                data-idd="{{ $users->id }}" href="javascript:void(0)"><i class="fa fa-trash"></i></a>
-                        </td>
-                        </tr>
-
-                        @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
                     </table>
-
-                    {{ $userSchool->links() }}
-
-
-
-
-
                 </div>
             </div>
+
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">จัดการผู้ใช้ (นักเรียน ผู้ปกครอง)</h3>
+                    <a class="btn btn-success btn-xs createNewUserSchool" data-id="" href="javascript:void(0)"
+                        id="createNewQuestionIAF">
+                        <i class="fa fa-plus-circle"></i> เพิ่มผู้ใช้
+                    </a>
+                </div>
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-condensed"  id="table_admin_studens">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>ชื่อผู้ใช้</th>
+                                <th>ชื่อ - นามสกุล</th>
+                                <th>เพิ่มเติม</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+
+
         </div>
     </div>
 
@@ -245,4 +236,5 @@
 @endsection
 @section('scriptSchool')
     <script src="{{ asset('js/adduser_school.js') }}"></script>
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

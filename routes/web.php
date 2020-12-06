@@ -93,9 +93,10 @@ Route::get('/list', 'Parent\ParentController@index_list_att')->name('list');
 Route::resource('mgadminschool', 'AdminSchool\ManageUserController');
 Route::post('mgadminschool_d/{id}/{dd}', 'AdminSchool\ManageUserController@destroy');
 Route::get('/search_useradminschool', 'AdminSchool\ManageUserController@index')->name('search_useradminschool');
-
-
-
+Route::post('admin_userteacher', 'AdminSchool\ManageUserController@admin_userteacher');
+Route::post('admin_userstudents', 'AdminSchool\ManageUserController@admin_userstudents');
+Route::get('roomteacher/{id}', 'AdminSchool\ManageUserController@roomteacher');
+Route::get('userstudents/{id}', 'AdminSchool\ManageUserController@userstudents');
 
 Route::get('/daily_time', function () {
 

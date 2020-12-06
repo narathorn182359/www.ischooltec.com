@@ -94,6 +94,15 @@ white-space: nowrap;
 
 }
 </style>
+<style>
+  td.details-control {
+    background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+</style>
  </head>
 <!--
 BODY TAG OPTIONS:
@@ -117,7 +126,7 @@ desired effect
 -->
 <body class="hold-transition skin-blue fixed sidebar-mini">
 <div class="wrapper">
-
+  <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
   <!-- Main Header -->
   <header class="main-header">
   

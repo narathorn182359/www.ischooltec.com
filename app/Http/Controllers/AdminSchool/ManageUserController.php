@@ -424,4 +424,182 @@ class ManageUserController extends Controller
 
         return response()->json(['error' => false,], 200);
     }
+
+
+    public function admin_userteacher(Request $request){
+        $columns = array(
+
+            0 => 'username',
+            1 => 'name_teacher',
+            2=>'options'
+
+        );
+
+        $totalData = DB::table('alf_teacher_info')
+        ->Join('users','alf_teacher_info.username_id_tc','users.username')->count();
+        $totalFiltered = $totalData;
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if (empty($request->input('search.value'))) {
+
+            $posts = DB::table('alf_teacher_info')
+            ->Join('users','alf_teacher_info.username_id_tc','users.username')
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+        } else {
+
+            $search = $request->input('search.value');
+            $posts = DB::table('alf_teacher_info')
+               ->Join('users','alf_teacher_info.username_id_tc','users.username')
+                ->orWhere('username', 'LIKE', "%{$search}%")
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+            $totalFiltered = DB::table('alf_teacher_info')
+            ->Join('users','alf_teacher_info.username_id_tc','users.username')
+            ->orWhere('username', 'LIKE', "%{$search}%")
+          
+            ->count();
+
+        }
+
+        $data = array();
+        if (!empty($posts)) {
+            foreach ($posts as $post) {
+          
+                $nestedData['username'] = $post->username;
+                $nestedData['name_teacher'] =  $post->name_teacher." ".$post->lastname_teacher;
+                $nestedData['options'] = " <a class='btn btn-info btn-xs  viewUser' data-id='{$post->username}'
+                href='javascript:void(0)'><i class='fa fa-eye'></i></a>
+                <a class='btn btn-warning btn-xs  editUser' data-id='{$post->username}'
+                href='javascript:void(0)'><i class='fa fa-edit'></i></a>
+                 <a class='btn btn-danger btn-xs   deleteUser_sc' data-id='{$post->username}'
+                data-idd='{$post->id}' href='javascript:void(0)'><i class='fa fa-trash'></i></a>";
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data,
+        );
+
+        echo json_encode($json_data);
+
+
+
+
+    }
+
+         public function roomteacher($id){
+
+         $data =  DB::table('alf_room_consult')
+            ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
+            ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
+            ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
+            ->select('name_class','room_rm','id_s','name_school_a','school_rm')
+            ->where('id_username_tc_rm',$id)->get();
+
+
+         return  response()->json($data);
+
+      }
+
+
+      public function userstudents($id){
+        $getuserstudent = DB::table('alf_student_info')
+        ->leftJoin('alf_name_school', 'alf_student_info.name_school', '=', 'alf_name_school.id')
+        ->leftJoin('alf_class_student', 'alf_student_info.class', '=', 'alf_class_student.id_s') 
+        ->where('student_code_id',$id)
+        ->get();
+
+        return  response()->json($getuserstudent);
+      }
+
+
+
+
+
+
+    public function  admin_userstudents(Request $request){
+        $columns = array(
+
+            0 => 'id',
+            1 => 'username',
+            2 => 'name_parent',
+
+        );
+
+        $totalData = DB::table('alf_parent_info')
+        ->Join('users','alf_parent_info.username_id','users.username')->count();
+        $totalFiltered = $totalData;
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if (empty($request->input('search.value'))) {
+
+            $posts = DB::table('alf_parent_info')
+            ->Join('users','alf_parent_info.username_id','users.username')
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+        } else {
+
+            $search = $request->input('search.value');
+            $posts = DB::table('alf_parent_info')
+            ->Join('users','alf_parent_info.username_id','users.username')
+                ->orWhere('username', 'LIKE', "%{$search}%")
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+            $totalFiltered = DB::table('alf_parent_info')
+            ->Join('users','alf_parent_info.username_id','users.username')
+            ->orWhere('username', 'LIKE', "%{$search}%")
+            ->count();
+
+        }
+
+        $data = array();
+        if (!empty($posts)) {
+            foreach ($posts as $post) {
+          
+                $nestedData['username'] = $post->username;
+                $nestedData['name_parent'] =  $post->name_parent." ".$post->lastname_parent;
+                $nestedData['options'] = " <a class='btn btn-info btn-xs  viewUser' data-id='{$post->username}'
+                href='javascript:void(0)'><i class='fa fa-eye'></i></a>
+                <a class='btn btn-warning btn-xs  editUser' data-id='{$post->username}'
+                href='javascript:void(0)'><i class='fa fa-edit'></i></a>
+                 <a class='btn btn-danger btn-xs   deleteUser_sc' data-id='{$post->username}'
+                data-idd='{$post->id}' href='javascript:void(0)'><i class='fa fa-trash'></i></a>";
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data,
+        );
+
+        echo json_encode($json_data);
+
+
+    }
 }

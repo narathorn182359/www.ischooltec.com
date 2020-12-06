@@ -145,4 +145,7 @@ class ManageNewController extends Controller
         DB::table('alf_public_relations')->where('id',$id)->delete();
         return response()->json(['error' => false,], 200);
     }
+
+
+    
 }
