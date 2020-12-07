@@ -566,8 +566,6 @@ Route::middleware('auth:api')->post('/grade', function (Request $request) {
 Route::middleware('auth:api')->post('/gradetc', function (Request $request) {
     $data = $request->json()->all();
     $user = $request->user();
-  
-    
     $json =  DB::table('alf_grade')
     ->where('id_term',$data['term'])
     ->where('id_studens', $data['code'])
@@ -575,6 +573,8 @@ Route::middleware('auth:api')->post('/gradetc', function (Request $request) {
     
     return response()->json($json);
 });
+
+
 
 
 

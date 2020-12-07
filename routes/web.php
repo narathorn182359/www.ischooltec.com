@@ -97,6 +97,9 @@ Route::post('admin_userteacher', 'AdminSchool\ManageUserController@admin_usertea
 Route::post('admin_userstudents', 'AdminSchool\ManageUserController@admin_userstudents');
 Route::get('roomteacher/{id}', 'AdminSchool\ManageUserController@roomteacher');
 Route::get('userstudents/{id}', 'AdminSchool\ManageUserController@userstudents');
+Route::get('pdfs', 'PDFController@pdftime');
+
+
 
 Route::get('/daily_time', function () {
 
