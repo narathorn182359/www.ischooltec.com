@@ -31,10 +31,55 @@
             font-family: "THSarabunNew";
         }
     </style>
+    <style>
+        #customers {
+          font-family: "THSarabunNew";
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+          height: 20px;
+        }
+        
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #customers tr:hover {background-color: #ddd;}
+        
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #4CAF50;
+          color: white;
+          height: 20px;
+        }
+        </style>
 </head>
 <body>
-<h1>ใบแจ้งหนี้สำหรับ {{ $name }}</h1>
-ขอขอบคุณในการสั่งซื้อ
+
+   <center><h2>รายงานการเข้า-ออกโรงเรียน</h2></center> 
+    <table id="customers">
+        <tr>
+          <th>ชื่อ-สกุล</th>
+          <th>เวลา</th>
+          <th>สถานะ</th>
+          <th>ปีการศึกษา</th>
+        </tr>
+        @foreach ($time as $item)
+        <tr>
+        <td>{{$item->code_student }} {{$item->name }} {{$item->lastname }}</td>
+            <td>{{$item->timeattendance }}</td>
+            <td>{{$item->name_status }}</td>
+            <td>{{$item->term }}</td>
+          </tr>
+         
+        @endforeach
+       
+
+      </table>
 
 </body>
 </html>

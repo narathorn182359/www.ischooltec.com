@@ -2,6 +2,7 @@
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use PDF;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -573,6 +574,18 @@ Route::middleware('auth:api')->post('/gradetc', function (Request $request) {
     
     return response()->json($json);
 });
+
+
+Route::middleware('auth:api')->post('/pdftime', function (Request $request) {
+    $data = $request->json()->all();
+    $user = $request->user();
+
+    
+    return response()->json($json);
+});
+
+
+
 
 
 
