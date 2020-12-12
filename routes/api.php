@@ -576,7 +576,7 @@ Route::middleware('auth:api')->post('/gradetc', function (Request $request) {
 });
 
 
-Route::middleware('auth:api')->post('/pdftime', function (Request $request) {
+Route::middleware('auth:api')->post('/pdftimes', function (Request $request) {
     $data = $request->json()->all();
     $user = $request->user();
 
