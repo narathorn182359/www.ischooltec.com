@@ -34,43 +34,54 @@ class Time_attendanceController extends Controller
         $user  =  DB::table('users')
         ->leftJoin('alf_teacher_info', 'users.username', '=', 'alf_teacher_info.username_id_tc')
         ->where('username',Auth::user()->username)
-        ->get();
+        ->first();
+
+          $getroom =  DB::table('alf_room_consult')
+          ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
+          ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
+          ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
+          ->select('name_class','room_rm','id_s','name_school_a','school_rm')
+          ->where('id_username_tc_rm',$user->username)->get();
+         
 
          $liststuden = DB::table('alf_student_info')
          ->leftJoin('alf_degree_student', 'alf_degree_student.id', '=', 'alf_student_info.degree')
          ->leftJoin('alf_class_student', 'alf_class_student.id_s', '=', 'alf_student_info.class')
          ->leftJoin('alf_name_school', 'alf_name_school.id', '=', 'alf_student_info.name_school')
-         ->where('consult',$user[0]->username)
-         ->where('name_school',$user[0]->school_teacher)
-         ->where('class',$user[0]->school_section)
-         ->where('room',$user[0]->school_room)
+         ->where('consult',$user->username)
+         ->where('name_school',$user->school_teacher)
+         ->where('class',$user->school_section)
+         ->where('room',$user->school_room)
          ->paginate(15);
 
-         $alf_teacher_info = DB::table('alf_teacher_info')->where('username_id_tc',Auth::user()->username)->get();
+         $alf_teacher_info = DB::table('alf_teacher_info')
+         ->where('username_id_tc',Auth::user()->username)
+         ->first();
          $alf_name_school ='';
-         if(count($alf_teacher_info) >0){
+        // if(count($alf_teacher_info) >0){
              $alf_name_school = DB::table('alf_name_school')
-             ->where('id',$alf_teacher_info[0]->school_teacher)
+             ->where('id',$alf_teacher_info->school_teacher)
              ->first();
-         }
+       //  }
 
 
         $data = array(
             'listmenu'=>$listmenu,
             'liststuden' => $liststuden,
             'user'    =>  $user,
-            'alf_name_school'=>$alf_name_school
+            'alf_name_school'=>$alf_name_school,
+            'getroom' =>   $getroom
         );
 
-        return view('ischool.Teacher.time_attendance',$data);
-
-
-
-
-
+        return view('ischool.Teacher.section',$data);
 
 
     }
+
+
+
+
+
 
     /**
      * Show the form for creating a new resource.

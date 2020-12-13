@@ -98,7 +98,7 @@
                                 <td></td>
                                 <td>{{ $listtimeatts->name }} {{ $listtimeatts->lastname }}</td>
                                 <td>{{ $listtimeatts->timeattendance }} น.</td>
-                                <td>{{ $listtimeatts->name_status }}t</td>
+                                <td>{{ $listtimeatts->name_status }} </td>
                             </tr>
                         @empty
 

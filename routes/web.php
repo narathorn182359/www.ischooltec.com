@@ -12,10 +12,7 @@ use Illuminate\Support\Facades\DB;
 |
 */
 
-Route::get('/', function () {
 
-    return view('welcome');
-});
 
 
 Route::get('/uploadimg', function () {
@@ -36,8 +33,8 @@ Route::post('/mgadminschool_add-Newterm', 'Masteradmin\ManageSchoolController@ad
 Route::post('/getdata', 'PythonController@getdata')->name('getdata');
 Route::post('/test', 'PythonController@store')->name('test');
 Auth::routes();
+Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index')->name('home');
-
 Route::get('/term', 'Masteradmin\ManageSchoolController@index_term')->name('index_term');
 Route::resource('mgmaseterschool', 'Masteradmin\ManageSchoolController')->names([
     'create' => 'mgmaseterschool.create',
@@ -69,6 +66,7 @@ Route::post('/roomsettingdata', 'Masteradmin\RoomsettingController@data');
 Route::resource('mgteacherinfo', 'Teacher\InfoStudentController');
 Route::resource('class-schedule-teacher', 'Teacher\ScheduleController');
 Route::resource('time-attendance-teacher', 'Teacher\Time_attendanceController');
+Route::get('clssroom/{id_class}/{id_room}', 'Teacher\SectionController@clssroom');
 Route::get('time_attendance_teacherst/{id}/{school}', 'Teacher\Time_attendanceController@show');
 Route::get('grade/{id}', 'Teacher\Time_attendanceController@grade');
 Route::post('uploadimag/{id}/{idt}','Teacher\Time_attendanceController@uploadImages');

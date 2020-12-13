@@ -12,7 +12,7 @@
     <input type="hidden" name="team" value="" id="team">
 
 <div class="col-md-12">
-        <!-- MAP & BOX PANE -->
+     
         <div class="box box-success">
           <div class="box-header with-border">
 {{$studeninfo->name}} {{$studeninfo->lastname}}

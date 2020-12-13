@@ -2,7 +2,7 @@
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use PDF;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -582,6 +582,42 @@ Route::middleware('auth:api')->post('/pdftimes', function (Request $request) {
 
     
     return response()->json($json);
+});
+
+Route::middleware('auth:api')->post('/getpdfpay', function (Request $request) {
+    $data = $request->json()->all();
+    $user = $request->user();
+    $sub_1 =  explode(",", $data['date']);
+    $sub_t1 = explode(" ", $sub_1[0]);
+    $sub_t2 = explode(" ", $sub_1[1]);
+            $date_sub_1 = strtotime(substr($sub_t1[0],1));
+            $date_sub_2 = strtotime($sub_t2[1]);
+            $date_1 = date('Y-m-d', $date_sub_1);
+            $date_2 = date('Y-m-d', $date_sub_2);
+    $time = DB::table('alf_timeattendance_student')
+    ->leftJoin('alf_student_info','alf_timeattendance_student.code_student','alf_student_info.student_code_id')
+    ->leftJoin('alf_term','alf_timeattendance_student.code_term','alf_term.id_term')
+    ->leftJoin('alf_status_student','alf_timeattendance_student.code_status','alf_status_student.id')
+    ->whereBetween('date', [$date_1, $date_2])
+    ->where('code_student',$data['code'])
+    ->get();
+   // dd($time);
+    $data =  array(
+    'time'  => $time
+    );
+    $pdf = PDF::loadView('pdf.time', $data);
+    $content = $pdf->download()->getOriginalContent();
+        $fileName =  time().$user->username.'.' . 'pdf' ;
+        file_put_contents('pdf/'.$fileName, $content);
+
+
+
+    return response()->json([
+        'status' => 200,
+        'date_1' =>   $date_1,
+        'date_2' =>   $date_2,
+        'file' =>    $fileName
+    ]);
 });
 
 

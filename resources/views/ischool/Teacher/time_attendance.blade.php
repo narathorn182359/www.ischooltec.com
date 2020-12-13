@@ -11,6 +11,7 @@
         <!-- MAP & BOX PANE -->
         <div class="box box-success">
           <div class="box-header with-border">
+            <a href="{{url('time-attendance-teacher')}}" class="btn btn-success">ย้อนกลับ</a>
               @if(isset($liststuden))
               <h3 class="box-title">รายละเอียดนักเรียน {{ $liststuden[0]->name_degree}}  ระดับ  {{ $liststuden[0]->name_class}}  / {{ $liststuden[0]->room}}  โรงเรียน  {{ $liststuden[0]->name_school_a}}   {{$liststuden->total()}} คน  </h3>
               @endif
