@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Crypt;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
+use Excel;
+
 class ManageUserController extends Controller
 {
     /**
@@ -82,6 +84,7 @@ class ManageUserController extends Controller
        
       
             if( $request->user_id == ''){
+
                 $check = $userauth = DB::table('users')->where('username',$request->username)->count();
                 $userauth = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->first(); 
                 if($check > 0){
@@ -115,14 +118,6 @@ class ManageUserController extends Controller
                          ]
                     );
                  }
-
-
-                
-
-
-
-
-
 
                 $input = $request->all();
                 $input['password'] = Hash::make($input['password']);
@@ -254,6 +249,218 @@ class ManageUserController extends Controller
         return response()->json(['error' => false,], 200);
 
     }
+
+    public function dowloadexcel(){
+
+        $data[] = 
+            array(
+                'username' => '',
+                'user_group' => 'ผู้ปกครอง',
+                'name' => '',
+                'lastname' => '',
+                'student_code' => ''
+            );
+
+     
+
+
+        return Excel::create('ไฟล์บันทึกข้อมูล', function ($excel) use ($data) {
+            $excel->sheet('mySheet', function ($sheet) use ($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('xlsx');
+
+
+    }
+
+
+    public function  dowloadtexamtech(){
+        $data[] = 
+        array(
+            'username' => '',
+            'user_group' => 'ครู/อาจารย์',
+            'name' => '',
+            'lastname' => '',
+           
+        );
+        return Excel::create('ไฟล์บันทึกข้อมูล', function ($excel) use ($data) {
+            $excel->sheet('mySheet', function ($sheet) use ($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('xlsx');
+    }
+
+    public function importDataUser(Request $request)
+    {
+       
+        $request->validate([
+            'import_file' => 'required'
+        ]);
+        $path = $request->file('import_file')->getRealPath();
+        $data = Excel::load($path)->get();
+       
+      
+        if($data->count()){
+            foreach ($data as $key => $value) {
+                if($value->user_group == 'ผู้ปกครอง'){
+
+                    $userauth = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->first();
+                    $check_user= DB::table('alf_parent_info')->where('username_id',$request->username)->count();
+                    if( $check_user == 0){
+                        DB::table('alf_parent_info')->insert(
+                            ['username_id' => $value->username,
+                             'titel_parent' => "-",
+                             'name_parent' => $value->name,
+                             'lastname_parent' =>$value->lastname,
+                             'school_parent' =>$userauth->school_adminschool,
+                             'student_parent' =>$value->username,
+                             'created_by' => Auth::user()->username,
+                             'created_at' => Carbon::now()
+                             ]
+                        );
+        
+                        $role_menu =  DB::table('alf_role_auth')
+                        ->where("group_id","3")
+                        ->get();
+        
+                         foreach( $role_menu as  $item ){
+                            DB::table('alf_notification_user')->insert(
+                                [
+                                    
+                                'menu_noti' => $item->id,
+                                 'username_noti' =>$value->username,
+                                 'count_noti' =>"0",
+                                 'school_noti' =>$userauth->school_adminschool,
+                                
+                                 ]
+                            );
+                         }
+        
+                        $user = new User;
+                        $user->username = $value->username;
+                        $user->password = Hash::make("0000");
+                        $user->user_group = '3';
+                        $user->save();
+                        $user->assignRole('parent');
+                    }else{
+                        DB::table('alf_parent_info')
+                             ->where('username_id',$value->username)
+                             ->update(
+                            ['username_id' => $value->username,
+                             'titel_parent' => "-",
+                             'name_parent' => $value->name,
+                             'lastname_parent' =>$value->lastname,
+                             'school_parent' =>$userauth->school_adminschool,
+                             'student_parent' =>$value->username,
+                             'update_by' => Auth::user()->username,
+                             'updated_at' => Carbon::now()
+                             ]
+                        );
+        
+                     
+
+                    }
+                   
+                }else if($value->user_group == 'ครู/อาจารย์'){
+            
+                    $userauth = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->first(); 
+                    $check_user= DB::table('alf_teacher_info')->where('username_id_tc',$value->username)->count();
+                    if( $check_user == 0){
+                        DB::table('alf_teacher_info')->insert(
+                            [
+                            'username_id_tc' => $value->username,
+                             'titel_teacher' => "-",
+                             'name_teacher' => $value->name,
+                             'lastname_teacher' =>$value->lastname,
+                             'school_teacher' =>$userauth->school_adminschool,
+                             'created_by' => Auth::user()->username,
+                             'created_at' => Carbon::now()
+                             ]
+                        );
+    
+                        $user = new User;
+                        $user->username = $value->username;
+                        $user->password = Hash::make("0000");
+                        $user->user_group = '4';
+                        $user->save();
+                        $user->assignRole('teacher');
+                        $role_menu =  DB::table('alf_role_auth')
+                        ->where("group_id","4")
+                        ->get();
+        
+                         foreach( $role_menu as  $item ){
+                            DB::table('alf_notification_user')->insert(
+                                ['menu_noti' => $item->id,
+                                 'username_noti' =>$request->username,
+                                 'count_noti' =>"0",
+                                 'school_noti' =>$userauth->school_adminschool,
+                                
+                                 ]
+                            );
+                         }
+
+
+                    }else{
+                        DB::table('alf_teacher_info')
+                        ->where('username_id_tc',$value->username)
+                        ->update(
+                            [
+                            'username_id_tc' => $value->username,
+                             'titel_teacher' => "-",
+                             'name_teacher' => $value->name,
+                             'lastname_teacher' =>$value->lastname,
+                             'school_teacher' =>$userauth->school_adminschool,
+                             'update_by' => Auth::user()->username,
+                             'updated_at' => Carbon::now()
+                             ]
+                        );
+
+
+                    }
+                  
+                }
+            }
+        
+        }
+
+      
+        
+        return  redirect('mgadminschool');
+
+    }
+
+    
+    public function addroomtc( Request $request){
+
+        $userauth = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->first(); 
+          DB::table('alf_room_consult')->insert([
+            "id_username_tc_rm"=> $request->user_id_addroom,
+            "room_rm"=> $request->roomaddroom,
+            "class_rm"=> $request->sectionaddroom,
+            "section_rm"=> "#",
+            "school_rm" => $userauth->school_adminschool,
+          ]); 
+
+
+
+
+
+        return response()->json(['error' => false,], 200);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Display the specified resource.
@@ -477,12 +684,15 @@ class ManageUserController extends Controller
           
                 $nestedData['username'] = $post->username;
                 $nestedData['name_teacher'] =  $post->name_teacher." ".$post->lastname_teacher;
-                $nestedData['options'] = " <a class='btn btn-info btn-xs  viewUser' data-id='{$post->username}'
-                href='javascript:void(0)'><i class='fa fa-eye'></i></a>
+                $nestedData['options'] = " 
+                <a class='btn btn-success btn-xs   addroom' data-id='{$post->username}'
+                href='javascript:void(0)'><i class='fa fa-database'></i> ห้องเรียน</a>
+                <a class='btn btn-info btn-xs  viewUser' data-id='{$post->username}'
+                href='javascript:void(0)'><i class='fa fa-eye'></i> ดู</a>
                 <a class='btn btn-warning btn-xs  editUser' data-id='{$post->username}'
-                href='javascript:void(0)'><i class='fa fa-edit'></i></a>
+                href='javascript:void(0)'><i class='fa fa-edit'></i> แก้ไข</a>
                  <a class='btn btn-danger btn-xs   deleteUser_sc' data-id='{$post->username}'
-                data-idd='{$post->id}' href='javascript:void(0)'><i class='fa fa-trash'></i></a>";
+                data-idd='{$post->id}' href='javascript:void(0)'><i class='fa fa-trash'></i> ลบ</a>";
                 $data[] = $nestedData;
             }
         }
@@ -501,19 +711,35 @@ class ManageUserController extends Controller
 
     }
 
-         public function roomteacher($id){
+     public function roomteacher($id){
 
          $data =  DB::table('alf_room_consult')
             ->leftJoin('alf_teacher_info', 'alf_room_consult.id_username_tc_rm', '=', 'alf_teacher_info.username_id_tc')
             ->leftJoin('alf_name_school', 'alf_teacher_info.school_teacher', '=', 'alf_name_school.id') 
             ->leftJoin('alf_class_student', 'alf_room_consult.class_rm', '=', 'alf_class_student.id_s') 
-            ->select('name_class','room_rm','id_s','name_school_a','school_rm')
+            ->select('name_class','room_rm','id_s','name_school_a','school_rm','id_consult')
             ->where('id_username_tc_rm',$id)->get();
 
 
          return  response()->json($data);
 
-      }
+    }
+
+    public function editaddroom($id){
+
+        $data =  DB::table('alf_room_consult')->where('id_consult',$id)->first();
+
+        return  response()->json($data);
+    }
+    
+
+    public function deleteaddroom($id){
+
+
+         DB::table('alf_room_consult')->where('id_consult',$id)->delete();
+        return response()->json(['error' => false,], 200);
+    }
+
 
 
       public function userstudents($id){
@@ -582,11 +808,11 @@ class ManageUserController extends Controller
                 $nestedData['username'] = $post->username;
                 $nestedData['name_parent'] =  $post->name_parent." ".$post->lastname_parent;
                 $nestedData['options'] = " <a class='btn btn-info btn-xs  viewUser' data-id='{$post->username}'
-                href='javascript:void(0)'><i class='fa fa-eye'></i></a>
+                href='javascript:void(0)'><i class='fa fa-eye'></i> ดู</a>
                 <a class='btn btn-warning btn-xs  editUser' data-id='{$post->username}'
-                href='javascript:void(0)'><i class='fa fa-edit'></i></a>
+                href='javascript:void(0)'><i class='fa fa-edit'></i> แก้ไข</a>
                  <a class='btn btn-danger btn-xs   deleteUser_sc' data-id='{$post->username}'
-                data-idd='{$post->id}' href='javascript:void(0)'><i class='fa fa-trash'></i></a>";
+                data-idd='{$post->id}' href='javascript:void(0)'><i class='fa fa-trash'></i> ลบ</a>";
                 $data[] = $nestedData;
             }
         }

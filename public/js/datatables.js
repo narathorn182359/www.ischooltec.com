@@ -43,18 +43,20 @@ $(function () {
                         html +=
                             "<tr>" +
                             '<td width="10"> '+ item.name_class + " / "
-                        +    item.room_rm+
+                        + item.room_rm+
                                  "</td>" +
-                            '<td width="10" > ' +
+                            '<td width="10" >  <a class="btn btn-warning btn-xs  editAddroom" data-id="'+ item.id_consult+'" href="javascript:void(0)"><i class="fa fa-edit"></i> แก้ไข</a>  ' +
                           
-                            "  </td>" +
+                            '<a class="btn btn-danger btn-xs  deleteAddroom" data-id="'+ item.id_consult+'" href="javascript:void(0)"><i class="fa fa-trash"></i> ลบ</a>  </td>' +
+                    
+
                             "</tr>";
                     });
 
                     //console.log(html);
                     callback(
                         $(
-                            '<table class="table table-bordered table-hover"><thead><tr><th width="10">ห้องที่ปรึกษา</th></tr></thead><tbody>' +
+                            "<table class='table table-bordered table-hover'><thead><tr><th width='10'>ห้องที่ปรึกษา</th><th width='10'>เพิ่มเติม</th></tr></thead><tbody>" +
                                 html +
                                 "</tbody></table>"
                         )

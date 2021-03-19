@@ -11,17 +11,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <title>ISCH | Starter</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css?v=').time() }}">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/font-awesome/css/font-awesome.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/font-awesome/css/font-awesome.min.css?v=').time() }}">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/Ionicons/css/ionicons.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/Ionicons/css/ionicons.min.css?v=').time() }}">
   <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('adminLTE/dist/css/AdminLTE.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/dist/css/AdminLTE.min.css?v=').time() }}">
  <!-- DataTables -->
- <link rel="stylesheet" href="{{asset('adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css')}}">
+ <link rel="stylesheet" href="{{asset('adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css?v=').time() }}">
   <!-- Select2 -->
-  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/select2/dist/css/select2.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/bower_components/select2/dist/css/select2.min.css?v=').time() }}">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
@@ -30,10 +30,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
   media = "all"
   rel = "stylesheet"
   type = "text/css" />
-  <link rel="stylesheet" href="{{asset('adminLTE/dist/css/AdminLTE.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/dist/css/AdminLTE.min.css?v=').time() }}">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="{{asset('adminLTE/dist/css/skins/_all-skins.min.css')}}">
+  <link rel="stylesheet" href="{{asset('adminLTE/dist/css/skins/_all-skins.min.css?v=').time() }}">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -194,9 +194,12 @@ desired effect
   <div class="content-wrapper">
     <section class="content-header">
       <h1>
+        @isset($alf_name_school)
         @if($alf_name_school != '')
         {{$alf_name_school->name_school_a}}
         @endif
+        @endisset
+     
       
         <small>Version 1.0</small>
       </h1>
@@ -234,16 +237,16 @@ desired effect
 <!-- REQUIRED JS SCRIPTS -->
 
 <!-- jQuery 3 -->
-<script src="{{asset('adminLTE/bower_components/jquery/dist/jquery.min.js')}}"></script>
+<script src="{{asset('adminLTE/bower_components/jquery/dist/jquery.min.js?v=').time() }}"></script>
 <!-- Bootstrap 3.3.7 -->
-<script src="{{asset('adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
-<script src="{{asset('adminLTE/bower_components/select2/dist/js/select2.full.min.js')}}"></script>
+<script src="{{asset('adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js?v=').time() }}"></script>
+<script src="{{asset('adminLTE/bower_components/select2/dist/js/select2.full.min.js?v=').time() }}"></script>
 
 <!-- AdminLTE App -->
-<script src="{{asset('adminLTE/dist/js/adminlte.min.js')}}"></script>
+<script src="{{asset('adminLTE/dist/js/adminlte.min.js?v=').time() }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
-<script src="{{asset('adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
+<script src="{{asset('adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js?v=').time() }}"></script>
+<script src="{{asset('adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js?v=').time() }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.7/js/fileinput.js" type="text/javascript">
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.7/themes/fa/theme.js" type="text/javascript"></script>
@@ -252,12 +255,16 @@ desired effect
 @yield('scriptSchool')
 @yield('scriptSchoolShow')
 @yield('scripttable')
+@yield('script')
 
 
 
 
 
-
-
+<script>
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+  </script>
 </body>
 </html>

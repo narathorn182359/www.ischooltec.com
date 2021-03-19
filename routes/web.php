@@ -96,8 +96,12 @@ Route::post('admin_userstudents', 'AdminSchool\ManageUserController@admin_userst
 Route::get('roomteacher/{id}', 'AdminSchool\ManageUserController@roomteacher');
 Route::get('userstudents/{id}', 'AdminSchool\ManageUserController@userstudents');
 Route::get('pdfs', 'PDFController@pdftime');
-
-
+Route::post('/dowloadtexam', 'AdminSchool\ManageUserController@dowloadexcel')->name('dowloadexcel');
+Route::post('/dowloadtexamtech', 'AdminSchool\ManageUserController@dowloadtexamtech')->name('dowloadtexamtech');
+Route::post('/importDataUser', 'AdminSchool\ManageUserController@importDataUser')->name('importDataUser');
+Route::post('/addroomtc', 'AdminSchool\ManageUserController@addroomtc')->name('addroomtc');
+Route::get('editaddroom/{id}', 'AdminSchool\ManageUserController@editaddroom');
+Route::post('/deleteaddroom/{id}', 'AdminSchool\ManageUserController@deleteaddroom')->name('deleteaddroom');
 
 Route::get('/daily_time', function () {
 

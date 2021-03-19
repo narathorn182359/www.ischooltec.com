@@ -39,6 +39,49 @@
             </form>
             <!-- /.box-footer -->
         </div> --}}
+   
+         
+        <div class="box box-success">
+            <div class="box-header with-border">
+              
+            
+            </div>
+            <div class="box-body ">
+                <div class="row">
+                    <div  class="col-md-6">
+                        <form action="{{ url('dowloadtexam') }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="">โหลดไฟล์สำหรับการอัพโหลด</label>
+                                <input type="submit" value="โหลด  (นักเรียน ผู้ปกครอง)" class="btn btn-warning">
+                            </div>
+                        </form>
+                        <form action="{{ url('dowloadtexamtech') }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="">โหลดไฟล์สำหรับการอัพโหลด</label>
+                                <input type="submit" value="โหลด (ครู)" class="btn btn-info">
+                            </div>
+                        </form>
+                    </div>
+                    <div  class="col-md-6">
+                        <form  action="{{ url('importDataUser') }}"  method="post" enctype="multipart/form-data">
+                            @csrf
+                     
+                            <input type="file" name="import_file"  required/> <br>
+                            <input type="submit" value="อัปโหลด" class="btn btn-success">
+                            
+                        </form>
+                    </div>
+                </div>
+              
+            
+             
+            
+        
+
+            </div>
+        </div>
             <div class="box box-success">
                 <div class="box-header with-border">
                     <h3 class="box-title">จัดการผู้ใช้ (ครู)</h3>
@@ -46,6 +89,7 @@
                         id="createNewQuestionIAF">
                         <i class="fa fa-plus-circle"></i> เพิ่มผู้ใช้
                     </a>
+                
                 </div>
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-condensed"  id="table_admin_userteacher">
@@ -233,8 +277,65 @@
     </div>
     <!-- /.modal -->
 
+
+    <div class="modal fade" id="modal-addroom">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">
+                        <lable id="modelHeadingroom"> </lable>
+                    </h4>
+                </div>
+                <form id="form-addroom">
+                    <div class="modal-body">
+                        <input type="hidden" name="user_id_addroom" id="user_id_addroom">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>ชั้น:</label>
+                                    <select class="form-control" style="width: 100%;" name="sectionaddroom" id="sectionaddroom" required>
+                                        <option value=""> ระบุ </option>
+                                        <option value="1"> ม.1 </option>
+                                        <option value="2"> ม.2 </option>
+                                        <option value="3"> ม.3 </option>
+                                        <option value="4"> ม.4 </option>
+                                        <option value="5"> ม.5 </option>
+                                        <option value="6"> ม.6 </option>
+                                        <option value="7"> ปวช.1 </option>
+                                        <option value="8"> ปวช.2 </option>
+                                        <option value="9"> ปวช.3 </option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                     <label>ห้อง:</label>
+                                  <input type="number" name="roomaddroom" id="roomaddroom" class="form-control" min="1" max="20" required>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">ปิด</button>
+                        <button type="submit" class="btn btn-primary" id="submit">บันทึก</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
 @endsection
 @section('scriptSchool')
     <script src="{{ asset('js/adduser_school.js') }}"></script>
     <script src="{{ asset('js/datatables.js') }}"></script>
+    <script src="{{ asset('js/room.js') }}"></script>
 @endsection
