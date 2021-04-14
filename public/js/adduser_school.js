@@ -150,6 +150,7 @@ $('body').on('click', '.viewUser', function () {
               'success'
             ).then(function(){
               location.reload();
+              //  $('#table_admin_studens').DataTable().draw();
               });
           },
           error: function (data) {

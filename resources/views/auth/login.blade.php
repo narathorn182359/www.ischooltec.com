@@ -53,10 +53,10 @@
 
 
 </head>
-<body class="hold-transition login-page imgbk">
+<body class="hold-transition login-page ">
 <div class="login-box">
   <div class="login-logo">
-    <a href="index2.html" class="text-white" ><b>I</b>SCHOOL</a>
+    <a href="index2.html" class="text-white" ><b>I</b>SCHOOLTEC</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">

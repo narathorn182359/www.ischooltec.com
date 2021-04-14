@@ -123,6 +123,6 @@
 
 @endsection
 @section('scriptUser')
-<script src="{{asset('js/addnew.js')}}"></script>
+<script src="{{asset('js/addnew.js?ver='.time()) }}"></script>
 
 @endsection

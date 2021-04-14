@@ -305,7 +305,7 @@ class ManageUserController extends Controller
                 if($value->user_group == 'ผู้ปกครอง'){
 
                     $userauth = DB::table('alf_adminschool_info')->where('username_id',Auth::user()->username)->first();
-                    $check_user= DB::table('alf_parent_info')->where('username_id',$request->username)->count();
+                    $check_user= DB::table('alf_parent_info')->where('username_id',$value->username)->count();
                     if( $check_user == 0){
                         DB::table('alf_parent_info')->insert(
                             ['username_id' => $value->username,
@@ -425,7 +425,7 @@ class ManageUserController extends Controller
 
       
         
-        return  redirect('mgadminschool');
+        return  redirect()->back()->withSuccess('บันทึกสำเร็จ');
 
     }
 

@@ -4,6 +4,13 @@
     <div class="row">
       
         <div class="col-md-12">
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-check"></i> Alert!</h4>
+               บันทึกสำเร็จ
+              </div>
+              @endif
        {{--    <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">ค้นหา </h3>
@@ -335,7 +342,7 @@
 
 @endsection
 @section('scriptSchool')
-    <script src="{{ asset('js/adduser_school.js') }}"></script>
-    <script src="{{ asset('js/datatables.js') }}"></script>
-    <script src="{{ asset('js/room.js') }}"></script>
+    <script src="{{ asset('js/adduser_school.js?ver='.time()) }}"></script>
+    <script src="{{ asset('js/datatables.js?ver='.time()) }}"></script>
+    <script src="{{ asset('js/room.js?ver='.time()) }}"></script>
 @endsection
